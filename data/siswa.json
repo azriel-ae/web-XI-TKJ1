@@ -1,0 +1,292 @@
+[
+  {
+    "absen": 1,
+    "nis": "9654/001.4.2.1",
+    "nama": "Achmad Danish Zahi Baiza",
+    "jk": "L",
+    "ig": "dznvrything",
+    "foto": "assets/img/siswa/siswa1.png"
+  },
+  {
+    "absen": 2,
+    "nis": "9655/002.4.2.1",
+    "nama": "Adjeng Septtia",
+    "jk": "P",
+    "ig": "adjengsheptia",
+    "foto": "assets/img/siswa/siswa2.png"
+  },
+  {
+    "absen": 3,
+    "nis": "9656/003.4.2.1",
+    "nama": "Aila Nisa Aldamilah",
+    "jk": "P",
+    "ig": "",
+    "foto": "assets/img/siswa/siswa3.png"
+  },
+  {
+    "absen": 4,
+    "nis": "9657/004.4.2.1",
+    "nama": "Aini Rahmah",
+    "jk": "P",
+    "ig": "aini.rahma0_",
+    "foto": "assets/img/siswa/siswa4.png"
+  },
+  {
+    "absen": 5,
+    "nis": "9658/005.4.2.1",
+    "nama": "Akhmad Syaifudin Zuhri",
+    "jk": "L",
+    "ig": "asznyarrr",
+    "foto": "assets/img/siswa/siswa5.png"
+  },
+  {
+    "absen": 6,
+    "nis": "9659/006.4.2.1",
+    "nama": "Alfi Dwi Putri Salsabila",
+    "jk": "P",
+    "ig": "alfi.dwiptrri_",
+    "foto": "assets/img/siswa/siswa6.png"
+  },
+  {
+    "absen": 7,
+    "nis": "9660/007.4.2.1",
+    "nama": "Alline Kisafa Naylah",
+    "jk": "P",
+    "ig": "aline_clvr02",
+    "foto": "assets/img/siswa/siswa7.png"
+  },
+  {
+    "absen": 8,
+    "nis": "9661/008.4.2.1",
+    "nama": "Althea Safitri",
+    "jk": "P",
+    "ig": "al.thea_iki",
+    "foto": "assets/img/siswa/siswa8.png"
+  },
+  {
+    "absen": 9,
+    "nis": "9662/009.4.2.1",
+    "nama": "Amalia Ayu Wulandari",
+    "jk": "P",
+    "ig": "memlowy",
+    "foto": "assets/img/siswa/siswa9.png"
+  },
+  {
+    "absen": 10,
+    "nis": "9663/010.4.2.1",
+    "nama": "Anis Safara Alfaisah",
+    "jk": "P",
+    "ig": "anis.sfaraa",
+    "foto": "assets/img/siswa/siswa10.png"
+  },
+  {
+    "absen": 11,
+    "nis": "9664/011.4.2.1",
+    "nama": "Aprilia Marsya Azzahra",
+    "jk": "P",
+    "ig": "itsamatime",
+    "foto": "assets/img/siswa/siswa11.png"
+  },
+  {
+    "absen": 12,
+    "nis": "9665/012.4.2.1",
+    "nama": "Aril Akbar Pradana",
+    "jk": "L",
+    "ig": "arilpradana6",
+    "foto": "assets/img/siswa/siswa12.png"
+  },
+  {
+    "absen": 13,
+    "nis": "9666/013.4.2.1",
+    "nama": "Ataya Fathriq Quennisa",
+    "jk": "P",
+    "ig": "444.sssaaa",
+    "foto": "assets/img/siswa/siswa13.png"
+  },
+  {
+    "absen": 14,
+    "nis": "9667/014.4.2.1",
+    "nama": "Aulia Cantika Putri",
+    "jk": "P",
+    "ig": "str4wline_",
+    "foto": "assets/img/siswa/siswa14.png"
+  },
+  {
+    "absen": 15,
+    "nis": "9668/015.4.2.1",
+    "nama": "Aynur Rokhmah",
+    "jk": "P",
+    "ig": "cno_rr",
+    "foto": "assets/img/siswa/siswa15.png"
+  },
+  {
+    "absen": 16,
+    "nis": "9669/016.4.2.1",
+    "nama": "Azriel Aurizal Ednisia",
+    "jk": "L",
+    "ig": "azrillarzl",
+    "portofolio": "https://azrielaurizal.vercel.app",
+    "foto": "assets/img/siswa/siswa16.png"
+  },
+  {
+    "absen": 17,
+    "nis": "9670/017.4.2.1",
+    "nama": "Bunga Aprilia",
+    "jk": "P",
+    "ig": "_n_ngaaa",
+    "foto": "assets/img/siswa/siswa17.png"
+  },
+  {
+    "absen": 18,
+    "nis": "9671/018.4.2.1",
+    "nama": "Cahyani Putri Amalia",
+    "jk": "P",
+    "ig": "liaapoee",
+    "foto": "assets/img/siswa/siswa18.png"
+  },
+  {
+    "absen": 19,
+    "nis": "9672/019.4.2.1",
+    "nama": "Cendy Aulia",
+    "jk": "P",
+    "ig": "_4uulliaaa",
+    "foto": "assets/img/siswa/siswa19.png"
+  },
+  {
+    "absen": 20,
+    "nis": "9673/020.4.2.1",
+    "nama": "Cikha Nesya Lestari",
+    "jk": "P",
+    "ig": "nesyaaaaa_02",
+    "foto": "assets/img/siswa/siswa20.png"
+  },
+  {
+    "absen": 21,
+    "nis": "9674/021.4.2.1",
+    "nama": "Cindy Amelia",
+    "jk": "P",
+    "ig": "_cindy.ameliaa0",
+    "foto": "assets/img/siswa/siswa21.png"
+  },
+  {
+    "absen": 22,
+    "nis": "9675/022.4.2.1",
+    "nama": "Cindy Aulia Syabharina Qiranti",
+    "jk": "P",
+    "ig": "ccndqq_",
+    "foto": "assets/img/siswa/siswa22.png"
+  },
+  {
+    "absen": 23,
+    "nis": "9676/023.4.2.1",
+    "nama": "Dava Eris Fajar Purnama",
+    "jk": "L",
+    "ig": "dvaadust_",
+    "foto": "assets/img/siswa/siswa23.png"
+  },
+  {
+    "absen": 24,
+    "nis": "9677/024.4.2.1",
+    "nama": "David Abdie Saputra",
+    "jk": "L",
+    "ig": "vidd.sptr",
+    "portofolio": "https://david-portfolio-hazel.vercel.app",
+    "foto": "assets/img/siswa/siswa24.png"
+  },
+  {
+    "absen": 25,
+    "nis": "9678/025.4.2.1",
+    "nama": "Dea Kartika",
+    "jk": "P",
+    "ig": "lesyeuxdeyayyaa",
+    "foto": "assets/img/siswa/siswa25.png"
+  },
+  {
+    "absen": 26,
+    "nis": "9679/026.4.2.1",
+    "nama": "Dela Pratiwi",
+    "jk": "P",
+    "ig": "delaluvee_",
+    "foto": "assets/img/siswa/siswa26.png"
+  },
+  {
+    "absen": 27,
+    "nis": "9680/027.4.2.1",
+    "nama": "Devita Mayangsari",
+    "jk": "P",
+    "ig": "",
+    "foto": "assets/img/siswa/siswa27.png"
+  },
+  {
+    "absen": 28,
+    "nis": "9681/028.4.2.1",
+    "nama": "Dewi Kurni Musyarrofah",
+    "jk": "P",
+    "ig": "dewiiii_laa",
+    "foto": "assets/img/siswa/siswa28.png"
+  },
+  {
+    "absen": 29,
+    "nis": "9682/029.4.2.1",
+    "nama": "Dhiyaa Sahirah Ranaa",
+    "jk": "P",
+    "ig": "dhyashir4h_",
+    "foto": "assets/img/siswa/siswa29.png"
+  },
+  {
+    "absen": 30,
+    "nis": "9683/030.4.2.1",
+    "nama": "Dian Vionisa Salsabila",
+    "jk": "P",
+    "ig": "ssalsabila_dyan",
+    "foto": "assets/img/siswa/siswa30.png"
+  },
+  {
+    "absen": 31,
+    "nis": "9684/031.4.2.1",
+    "nama": "Diko Pradista",
+    "jk": "L",
+    "ig": "dikopradista",
+    "foto": "assets/img/siswa/siswa31.png"
+  },
+  {
+    "absen": 32,
+    "nis": "9685/032.4.2.1",
+    "nama": "Eka Putri Anggraini",
+    "jk": "P",
+    "ig": "a.raniiaa",
+    "foto": "assets/img/siswa/siswa32.png"
+  },
+  {
+    "absen": 33,
+    "nis": "9686/033.4.2.1",
+    "nama": "Erlis Prafitiyasari",
+    "jk": "P",
+    "ig": "erlisprftysr88",
+    "foto": "assets/img/siswa/siswa33.png"
+  },
+  {
+    "absen": 34,
+    "nis": "9687/034.4.2.1",
+    "nama": "Eta Naurah Auniillah",
+    "jk": "P",
+    "ig": "nauraaunllh_",
+    "foto": "assets/img/siswa/siswa34.png"
+  },
+  {
+    "absen": 35,
+    "nis": "9688/035.4.2.1",
+    "nama": "Fahrul Rozi",
+    "jk": "L",
+    "ig": "fahrul_87",
+    "foto": "assets/img/siswa/siswa35.png"
+  },
+  {
+    "absen": 36,
+    "nis": "9689/036.4.2.1",
+    "nama": "Faradisa Fauziyah",
+    "jk": "P",
+    "ig": "fardsaaaaaa_",
+    "foto": "assets/img/siswa/siswa36.png"
+  }
+]

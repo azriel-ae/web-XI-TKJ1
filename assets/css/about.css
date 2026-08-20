@@ -1,0 +1,101 @@
+.about-main { padding: 0; }
+.about-main p { color: var(--color-text-muted); line-height: 1.8; }
+
+/* Kartu "Tentang Kami" — latar warna (gradient), tanpa foto */
+.about-main--photo {
+  position: relative;
+  overflow: hidden;
+  border: none;
+  color: #fff;
+  background: var(--gradient-primary);
+}
+.about-main--photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(560px circle at 100% 0%, rgba(255, 255, 255, .12), transparent 60%),
+    radial-gradient(480px circle at 0% 100%, rgba(8, 20, 43, .35), transparent 55%);
+  pointer-events: none;
+}
+
+/* Grid dua kolom: panel identitas (kiri) + narasi & highlight (kanan) */
+.about-main-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 208px 1fr;
+  align-items: center;
+}
+
+.about-visual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  padding: 40px 22px;
+  border-right: 1px solid rgba(255, 255, 255, .16);
+}
+.about-visual h3 {
+  margin: 0;
+  color: #fff;
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+.about-visual-tag {
+  display: inline-flex;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .14);
+  color: rgba(255, 255, 255, .85);
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .03em;
+}
+
+.about-body { padding: 36px 34px; }
+.about-body p { margin: 0; color: rgba(255, 255, 255, .86); }
+
+/* Highlight ringkas: pengganti stat sederhana, tampil sebagai chip berikon */
+.about-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
+.about-highlight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, .08);
+  border: 1px solid rgba(255, 255, 255, .16);
+  flex: 1 1 150px;
+  transition: background var(--transition), transform var(--transition);
+}
+.about-highlight:hover { background: rgba(255, 255, 255, .13); transform: translateY(-2px); }
+.about-highlight i {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .14);
+  color: #fff;
+  font-size: .82rem;
+}
+.about-highlight strong { display: block; color: #fff; font-size: 1.05rem; font-weight: 700; line-height: 1.15; }
+.about-highlight span { color: rgba(255, 255, 255, .68); font-size: .72rem; }
+
+.icon-box--light { background: rgba(255, 255, 255, .16); color: #fff; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .25); }
+
+@media (max-width: 767px) {
+  .about-main-grid { grid-template-columns: 1fr; }
+  .about-visual { border-right: none; border-bottom: 1px solid rgba(255, 255, 255, .16); padding: 32px 24px 22px; }
+  .about-body { padding: 26px 24px 30px; text-align: center; }
+  .about-highlights { justify-content: center; }
+}
