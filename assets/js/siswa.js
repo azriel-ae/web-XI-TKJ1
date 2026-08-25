@@ -2,8 +2,44 @@ let studentData = [];
 
 // Lagu favorit khusus diputar suaranya saja (tanpa ditampilkan) hanya saat detail siswa Azriel dibuka.
 const SPECIAL_STUDENT_SONGS = {
-  "azriel aurizal ednisia": "https://open.spotify.com/embed/track/6PqWdGIYq5xdLaa4zCZfRp?utm_source=generator&theme=0&autoplay=1"
+  "azriel aurizal ednisia": "spotify:track:6PqWdGIYq5xdLaa4zCZfRp"
 };
+
+// --- Spotify iFrame API resmi: siap dipakai begitu skrip di index.html selesai dimuat ---
+let spotifyIframeApi = null;
+let spotifyController = null;
+window.onSpotifyIframeApiReady = (IFrameAPI) => { spotifyIframeApi = IFrameAPI; };
+
+function playHiddenSong(spotifyUri) {
+  const container = document.getElementById("modalLaguPlayer");
+  if (!container) return;
+
+  // Controller sudah pernah dibuat sebelumnya -> tinggal load track baru & putar dari awal.
+  if (spotifyController) {
+    spotifyController.loadUri(spotifyUri);
+    spotifyController.play();
+    return;
+  }
+
+  // Belum ada controller: buat sekali, lalu putar saat sudah siap.
+  if (!spotifyIframeApi) {
+    // API resmi belum selesai dimuat (koneksi lambat) — coba lagi sesaat lagi.
+    setTimeout(() => playHiddenSong(spotifyUri), 300);
+    return;
+  }
+  spotifyIframeApi.createController(
+    container,
+    { uri: spotifyUri, width: 1, height: 1 },
+    controller => {
+      spotifyController = controller;
+      controller.addListener("ready", () => controller.play());
+    }
+  );
+}
+
+function stopHiddenSong() {
+  if (spotifyController) spotifyController.pause();
+}
 
 function initials(name) {
   return name.trim().split(/\s+/).slice(0, 2).map(part => part[0]).join("").toUpperCase();
@@ -55,12 +91,11 @@ function openStudentModal(student) {
     igRow.hidden = false;
   }
 
-  const laguFrame = document.getElementById("modalLaguFrame");
   const laguSrc = SPECIAL_STUDENT_SONGS[student.nama.trim().toLowerCase()];
-  // Set ulang src (walau siswa sama) supaya lagu selalu mulai dari awal tiap kali kartu dipencet.
-  laguFrame.src = "";
   if (laguSrc) {
-    requestAnimationFrame(() => { laguFrame.src = laguSrc; });
+    playHiddenSong(laguSrc);
+  } else {
+    stopHiddenSong();
   }
 
   bootstrap.Modal.getOrCreateInstance(document.getElementById("siswaModal")).show();
@@ -70,10 +105,7 @@ function openStudentModal(student) {
 document.addEventListener("DOMContentLoaded", () => {
   const modalEl = document.getElementById("siswaModal");
   if (!modalEl) return;
-  modalEl.addEventListener("hidden.bs.modal", () => {
-    const laguFrame = document.getElementById("modalLaguFrame");
-    if (laguFrame) laguFrame.src = "";
-  });
+  modalEl.addEventListener("hidden.bs.modal", stopHiddenSong);
 });
 
 async function initStudents() {
