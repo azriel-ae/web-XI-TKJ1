@@ -1,5 +1,10 @@
 let studentData = [];
 
+// Lagu favorit khusus diputar suaranya saja (tanpa ditampilkan) hanya saat detail siswa Azriel dibuka.
+const SPECIAL_STUDENT_SONGS = {
+  "azriel aurizal ednisia": "https://open.spotify.com/embed/track/6PqWdGIYq5xdLaa4zCZfRp?utm_source=generator&theme=0&autoplay=1"
+};
+
 function initials(name) {
   return name.trim().split(/\s+/).slice(0, 2).map(part => part[0]).join("").toUpperCase();
 }
@@ -50,8 +55,26 @@ function openStudentModal(student) {
     igRow.hidden = false;
   }
 
+  const laguFrame = document.getElementById("modalLaguFrame");
+  const laguSrc = SPECIAL_STUDENT_SONGS[student.nama.trim().toLowerCase()];
+  // Set ulang src (walau siswa sama) supaya lagu selalu mulai dari awal tiap kali kartu dipencet.
+  laguFrame.src = "";
+  if (laguSrc) {
+    requestAnimationFrame(() => { laguFrame.src = laguSrc; });
+  }
+
   bootstrap.Modal.getOrCreateInstance(document.getElementById("siswaModal")).show();
 }
+
+// Hentikan pemutaran lagu saat modal ditutup, supaya audio tidak terus jalan di background.
+document.addEventListener("DOMContentLoaded", () => {
+  const modalEl = document.getElementById("siswaModal");
+  if (!modalEl) return;
+  modalEl.addEventListener("hidden.bs.modal", () => {
+    const laguFrame = document.getElementById("modalLaguFrame");
+    if (laguFrame) laguFrame.src = "";
+  });
+});
 
 async function initStudents() {
   const container = document.getElementById("siswaList");

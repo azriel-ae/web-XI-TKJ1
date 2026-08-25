@@ -1,0 +1,79 @@
+/* ==========================================================================
+   UI POLISH — perbaikan konsistensi tampilan & responsivitas di seluruh situs.
+   File ini dimuat paling akhir supaya bisa menghaluskan detail tanpa
+   membongkar sistem desain (variables.css) yang sudah ada.
+   ========================================================================== */
+
+/* --- Scrollbar & seleksi teks: sentuhan kecil biar terasa satu identitas --- */
+::selection { background: var(--color-primary-soft-2); color: var(--color-primary-dark); }
+html { scrollbar-color: var(--color-primary-light) var(--color-background-alt); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--color-background-alt); }
+::-webkit-scrollbar-thumb { background: var(--color-primary-soft-2); border-radius: 999px; border: 2px solid var(--color-background-alt); }
+::-webkit-scrollbar-thumb:hover { background: var(--color-primary-light); }
+
+/* --- Konsistensi tipografi: judul & paragraf tidak "melompat" antar breakpoint --- */
+h1, h2, h3, h4, h5, h6 { font-family: "Poppins", sans-serif; }
+p { line-height: 1.7; }
+.section-subtitle { line-height: 1.7; }
+
+/* --- Tombol & elemen interaktif: target sentuh minimal 44px, transisi konsisten --- */
+button, a.btn, .btn-primary-custom, .btn-outline-custom, .nav-social, .siswa-card {
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-primary-custom, .btn-outline-custom { will-change: transform; }
+.btn-primary-custom:active, .btn-outline-custom:active { transform: translateY(0) scale(.98); }
+
+/* --- Kartu (site-card / siswa-card) lebih konsisten saat hover di semua breakpoint --- */
+.siswa-card { transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition); }
+.siswa-card:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; border-radius: var(--radius-md); }
+.siswa-name { overflow-wrap: break-word; hyphens: auto; }
+
+/* --- Modal siswa: jarak lebih rapi & aman di layar kecil / notch --- */
+.student-modal { margin: 0 auto; }
+.student-modal-body { padding-left: clamp(18px, 6vw, 26px); padding-right: clamp(18px, 6vw, 26px); }
+
+/* --- Loading state generik dipakai beberapa komponen (gallery, feedback, dsb) --- */
+.empty-state i { display: block; margin-bottom: 8px; font-size: 1.4rem; opacity: .55; }
+
+/* --- Navbar: cegah teks brand terpotong di layar sangat sempit --- */
+.navbar-brand { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
+.brand-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* --- Form control (input/textarea) senada dengan search siswa --- */
+.form-control, .form-select {
+  border-radius: var(--radius-sm);
+  border-color: var(--color-border);
+  transition: box-shadow var(--transition), border-color var(--transition);
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px var(--color-primary-soft);
+}
+
+/* --- Perbaikan breakpoint tablet (768–991px) yang sebelumnya belum ditangani --- */
+@media (max-width: 991.98px) and (min-width: 768px) {
+  .hero-title { font-size: clamp(2.3rem, 6vw, 3.4rem); }
+  .siswa-name { min-height: 38px; font-size: .85rem; }
+}
+
+/* --- Perbaikan layar kecil (<576px): kartu siswa, modal, tombol aksi --- */
+@media (max-width: 575.98px) {
+  .siswa-avatar { width: 64px; height: 64px; }
+  .siswa-name { font-size: .82rem; min-height: 36px; }
+  .student-modal-banner { height: 72px; }
+  .student-modal-photo { width: 96px; height: 96px; bottom: -38px; }
+  .student-modal-body { padding-top: 48px; }
+  .hero-actions .btn-primary-custom, .hero-actions .btn-outline-custom { width: 100%; }
+  .gallery-pagination { gap: 10px; }
+}
+
+/* --- Perbaikan layar sangat kecil (<380px) agar grid siswa tetap nyaman --- */
+@media (max-width: 380px) {
+  .struktur-grid { grid-template-columns: 1fr; }
+}
+
+/* --- Hormati preferensi pengguna yang mengurangi animasi --- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}
