@@ -1,0 +1,29 @@
+.contact-card { display: flex; flex-direction: column; overflow: hidden; padding: 0; color: inherit; text-decoration: none; }
+
+/* Area screenshot — ganti file di assets/img/kontak/ dengan cuplikan profil Anda sendiri */
+.contact-shot { position: relative; aspect-ratio: 16 / 10; background: var(--gradient-soft); overflow: hidden; }
+.contact-shot img { position: relative; z-index: 2; width: 100%; height: 100%; object-fit: cover; display: block; }
+.contact-shot-fallback {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  padding: 16px;
+  color: var(--color-primary);
+  background: linear-gradient(160deg, var(--color-primary-soft), var(--color-primary-soft-2));
+}
+.contact-shot-fallback i { font-size: 2rem; }
+.contact-shot-fallback span { color: var(--color-text-muted); font-size: .76rem; line-height: 1.6; }
+.contact-shot-fallback code { color: var(--color-primary-dark); font-size: .72rem; }
+
+.contact-card-body { display: flex; align-items: center; gap: 16px; padding: 22px 24px; }
+.contact-card-body h3 { margin: 0 0 4px; font-size: 1rem; color: var(--color-primary-dark); }
+.contact-card-body p { margin: 0; color: var(--color-text-muted); font-size: .86rem; }
+.contact-arrow { margin-left: auto; color: var(--color-text-muted); transition: color var(--transition), transform var(--transition); }
+.contact-card:hover .contact-arrow { color: var(--color-primary); transform: translate(2px, -2px); }
+.contact-card:hover .icon-box { background: var(--gradient-primary); color: #fff; }

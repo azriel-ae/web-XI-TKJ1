@@ -1,0 +1,273 @@
+/* Widget "Masukan" — tertutup (collapsed) secara default supaya hemat tempat
+   di footer, terbuka saat judulnya diklik (elemen <details>/<summary>). */
+.footer-feedback {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, .1);
+  max-width: 820px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.footer-feedback-summary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  list-style: none;
+  cursor: pointer;
+  background: rgba(255, 255, 255, .04);
+  border: 1px solid rgba(255, 255, 255, .09);
+  border-radius: var(--radius-md);
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.footer-feedback-summary::-webkit-details-marker { display: none; }
+.footer-feedback-summary::marker { content: ""; }
+
+.footer-feedback-summary:hover {
+  background: rgba(255, 255, 255, .07);
+  border-color: rgba(255, 255, 255, .16);
+}
+
+.footer-feedback-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: var(--gradient-primary);
+  color: #fff;
+  font-size: .85rem;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, .28);
+}
+
+.footer-feedback-summary-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.footer-feedback-summary-text strong { color: #fff; font-size: .88rem; font-weight: 700; }
+.footer-feedback-summary-text span { color: rgba(255, 255, 255, .5); font-size: .76rem; }
+
+.footer-feedback-caret {
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, .45);
+  font-size: .8rem;
+  transition: transform var(--transition);
+}
+
+.footer-feedback[open] .footer-feedback-caret { transform: rotate(180deg); }
+.footer-feedback[open] .footer-feedback-summary {
+  background: rgba(255, 255, 255, .06);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  border-bottom-color: transparent;
+}
+
+.footer-feedback-panel {
+  background: rgba(255, 255, 255, .04);
+  border: 1px solid rgba(255, 255, 255, .09);
+  border-top: none;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  padding: 20px 18px;
+  animation: feedback-panel-in .2s ease;
+}
+
+@keyframes feedback-panel-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.feedback-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.feedback-field { display: flex; flex-direction: column; gap: 6px; }
+
+.feedback-field label {
+  font-size: .72rem;
+  font-weight: 500;
+  letter-spacing: .01em;
+  color: rgba(255, 255, 255, .55);
+}
+
+.feedback-input {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, .12);
+  background: rgba(255, 255, 255, .04);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  padding: 9px 14px;
+  font-size: .85rem;
+  font-family: inherit;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.feedback-input::placeholder { color: rgba(255, 255, 255, .32); }
+
+.feedback-input:focus {
+  outline: none;
+  border-color: var(--color-primary-light);
+  background: rgba(255, 255, 255, .07);
+}
+
+/* Kotak pesan: textarea + lampiran foto menyatu dalam satu bingkai */
+.feedback-message-box {
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, .12);
+  background: rgba(255, 255, 255, .04);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.feedback-message-box:focus-within {
+  border-color: var(--color-primary-light);
+  background: rgba(255, 255, 255, .07);
+}
+
+.feedback-textarea {
+  display: block;
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: #fff;
+  padding: 9px 42px 9px 14px;
+  font-size: .85rem;
+  font-family: inherit;
+  line-height: 1.5;
+  resize: vertical;
+  min-height: 72px;
+}
+
+.feedback-textarea:focus { outline: none; }
+.feedback-textarea::placeholder { color: rgba(255, 255, 255, .32); }
+
+/* Tombol lampirkan foto — ikon kecil menyatu di sudut kotak pesan */
+.feedback-attach {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  color: rgba(255, 255, 255, .45);
+  cursor: pointer;
+  transition: color var(--transition), background var(--transition);
+}
+
+.feedback-attach:hover { color: #fff; background: rgba(255, 255, 255, .1); }
+.feedback-attach input[type="file"] { display: none; }
+
+/* Pratinjau foto — chip kecil di dalam kotak pesan, bercampur dengan area teks */
+.feedback-foto-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 10px 0;
+  padding: 5px 10px 5px 5px;
+  width: fit-content;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .08);
+  border: 1px solid rgba(255, 255, 255, .1);
+}
+
+.feedback-foto-preview img {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.feedback-foto-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .16);
+  color: #fff;
+  font-size: .6rem;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.feedback-foto-remove:hover { background: rgba(255, 255, 255, .28); }
+
+/* Honeypot — tersembunyi dari pengguna asli, hanya terlihat oleh bot */
+.feedback-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.feedback-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 2px;
+}
+
+.feedback-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 22px;
+  border: none;
+  border-radius: 999px;
+  background: var(--gradient-primary);
+  color: #fff;
+  font-size: .82rem;
+  font-weight: 600;
+  letter-spacing: .01em;
+  cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition), opacity var(--transition);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, .28);
+  flex-shrink: 0;
+}
+
+.feedback-submit:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 12px 26px rgba(37, 99, 235, .36); }
+.feedback-submit:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+.feedback-spinner {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, .4);
+  border-top-color: #fff;
+  animation: feedback-spin .7s linear infinite;
+  display: none;
+}
+
+.feedback-submit.is-loading .feedback-spinner { display: inline-block; }
+.feedback-submit.is-loading .feedback-submit-label { opacity: .85; }
+
+@keyframes feedback-spin { to { transform: rotate(360deg); } }
+
+.feedback-status {
+  font-size: .74rem;
+  line-height: 1.5;
+}
+
+.feedback-status.success { color: #7dd3fc; }
+.feedback-status.error { color: #fca5a5; }
+
+@media (max-width: 575px) {
+  .footer-feedback-summary { padding: 12px 14px; gap: 10px; }
+  .footer-feedback-panel { padding: 16px 14px; }
+}
+

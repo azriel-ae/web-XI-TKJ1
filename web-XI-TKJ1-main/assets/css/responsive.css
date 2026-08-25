@@ -1,0 +1,12 @@
+@media (max-width: 991.98px) {
+  .struktur-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .navbar-collapse { margin-top: 10px; padding: 14px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: #fff; }
+}
+@media (max-width: 575.98px) {
+  .section { padding: 52px 0; }
+  .hero { min-height: auto; padding: 100px 0 52px; }
+  .hero-logo-wrap { width: 92px; height: 92px; }
+  .about-stats { grid-template-columns: 1fr; }
+  .struktur-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .student-details li { flex-direction: column; gap: 3px; }
+}
