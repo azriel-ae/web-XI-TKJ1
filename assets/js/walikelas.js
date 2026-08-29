@@ -1,64 +1,112 @@
 /* ==========================================================
    WALI KELAS
-   Ambil data wali kelas dari data/walikelas.json
-   lalu render satu kartu (foto + nama + detail).
+   Ambil data wali kelas dari data/walikelas.json lalu render
+   sebagai komposisi editorial (foto besar + info bertingkat).
+   Tidak pernah mengarang data — field yang kosong disembunyikan.
    ========================================================== */
 
 async function initWalikelas() {
   const wrap = document.getElementById("walikelasWrap");
   if (!wrap) return;
 
+  wrap.innerHTML = buildWalikelasSkeleton();
+
   try {
     const response = await fetch("data/walikelas.json");
-    if (!response.ok) throw new Error("Data wali kelas gagal dimuat");
+    if (!response.ok) throw new Error("gagal-muat");
     const data = await response.json();
+
+    if (!data || !data.nama) {
+      wrap.innerHTML = buildWalikelasEmpty();
+      return;
+    }
+
     wrap.innerHTML = buildWalikelasCard(data);
   } catch (error) {
-    wrap.innerHTML = `<div class="empty-state is-error"><i class="fa-regular fa-circle-exclamation"></i>${error.message}. Jalankan website lewat server, bukan membuka index.html langsung.<br><button type="button" class="empty-state-retry" onclick="initWalikelas()"><i class="fa-solid fa-rotate-right"></i> Coba Lagi</button></div>`;
+    wrap.innerHTML = buildWalikelasError();
   }
+}
+
+function buildWalikelasSkeleton() {
+  return `
+    <div class="walikelas-feature walikelas-skeleton" role="status" aria-label="Memuat data...">
+      <div class="walikelas-photo-col">
+        <div class="walikelas-photo-frame skeleton-block"></div>
+      </div>
+      <div class="walikelas-info">
+        <span class="skeleton-block walikelas-skel-line is-wide"></span>
+        <span class="skeleton-block walikelas-skel-line is-mid"></span>
+        <span class="skeleton-block walikelas-skel-line is-narrow"></span>
+      </div>
+    </div>
+  `;
+}
+
+function buildWalikelasError() {
+  return `
+    <div class="empty-state is-error">
+      <i class="fa-regular fa-circle-exclamation"></i>
+      <strong>Data wali kelas gagal dimuat.</strong>
+      <button type="button" class="empty-state-retry" onclick="initWalikelas()">
+        <i class="fa-solid fa-rotate-right"></i> Coba Lagi
+      </button>
+    </div>
+  `;
+}
+
+function buildWalikelasEmpty() {
+  return `
+    <div class="empty-state">
+      <i class="fa-regular fa-address-card"></i>
+      <strong>Profil wali kelas belum tersedia.</strong>
+    </div>
+  `;
 }
 
 function buildWalikelasCard(data) {
   const DEFAULT_FOTO = "assets/img/guru/guru.png";
-  const nama = data.nama || "Nama Wali Kelas";
-  const jabatan = data.jabatan || "Wali Kelas";
-  const nip = data.nip && data.nip !== "-" ? data.nip : "";
+  const nama = escapeHtml(data.nama);
+  const jabatan = data.jabatan ? escapeHtml(data.jabatan) : "";
   const foto = data.foto || DEFAULT_FOTO;
   const ig = data.instagram || "";
   const igHandle = ig ? escapeHtml(ig.replace("@", "")) : "";
+  const quote = data.quote || data.pesan || "";
 
-  const nipRow = nip
-    ? `<li>
-        <span><i class="fa-regular fa-id-card"></i> NIP</span>
-        <strong>${escapeHtml(nip)}</strong>
-      </li>`
+  const jabatanRow = jabatan
+    ? `<p class="walikelas-jabatan"><span class="walikelas-jabatan-dot" aria-hidden="true"></span>${jabatan}</p>`
     : "";
+
   const igRow = ig
-    ? `<li>
-        <span><i class="fa-brands fa-instagram"></i> Instagram</span>
-        <strong><a class="walikelas-ig-link" href="https://instagram.com/${igHandle}" target="_blank" rel="noopener">@${igHandle}</a></strong>
-      </li>`
+    ? `<a class="walikelas-ig" href="https://instagram.com/${igHandle}" target="_blank" rel="noopener">
+        <i class="fa-brands fa-instagram"></i> @${igHandle}
+       </a>`
+    : "";
+
+  const quoteRow = quote
+    ? `<p class="walikelas-quote">${escapeHtml(quote)}</p>`
     : "";
 
   return `
-    <article class="site-card walikelas-card">
-      <div class="walikelas-visual">
-        <div class="walikelas-photo-wrap">
+    <div class="walikelas-feature">
+      <div class="walikelas-photo-col">
+        <div class="walikelas-photo-frame">
           <img
             class="walikelas-photo"
             src="${escapeHtml(foto)}"
-            alt="Foto ${escapeHtml(nama)}"
+            alt="Foto ${nama}"
+            loading="lazy"
             onerror="this.onerror=null;this.src='${DEFAULT_FOTO}';"
           />
+          <span class="walikelas-marker" aria-hidden="true">WK · 01</span>
         </div>
-        <span class="walikelas-badge"><i class="fa-solid fa-chalkboard-user"></i> Wali Kelas</span>
       </div>
       <div class="walikelas-info">
-        <h3 class="walikelas-nama">${escapeHtml(nama)}</h3>
-        <p class="walikelas-jabatan">${escapeHtml(jabatan)}</p>
-        ${nipRow || igRow ? `<ul class="walikelas-details">${nipRow}${igRow}</ul>` : ""}
+        <h3 class="walikelas-nama">${nama}</h3>
+        ${jabatanRow}
+        ${igRow}
+        ${quoteRow}
       </div>
-    </article>
+    </div>
   `;
 }
 

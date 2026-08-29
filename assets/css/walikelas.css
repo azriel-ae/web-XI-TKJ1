@@ -1,153 +1,199 @@
 /* ==========================================================
    WALI KELAS
-   Kartu tunggal: panel foto (kiri) + info terstruktur (kanan).
+   Komposisi editorial: foto besar dengan frame offset lime
+   (kiri) + hierarki informasi (kanan). Selalu tampil di atas
+   latar charcoal (.section-dark), jadi warna di sini "dark-first".
    ========================================================== */
 
 .walikelas-wrap {
-  display: flex;
-  justify-content: center;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-.walikelas-card {
-  display: flex;
-  width: 100%;
-  max-width: 660px;
-  overflow: hidden;
-  background: var(--card-bg, #fff);
-  border: 1px solid var(--color-border, #e5eaf1);
-  border-radius: var(--radius-lg, 24px);
-  box-shadow: var(--shadow-sm, 0 8px 24px rgba(0, 0, 0, 0.06));
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.walikelas-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md, 0 12px 24px rgba(0, 0, 0, 0.08));
-}
-
-/* Panel kiri: foto dengan latar warna solid */
-.walikelas-visual {
-  position: relative;
-  flex: 0 0 210px;
-  display: flex;
-  flex-direction: column;
+.walikelas-feature {
+  display: grid;
+  grid-template-columns: minmax(220px, 320px) 1fr;
   align-items: center;
-  justify-content: center;
-  gap: 16px;
-  padding: 32px 20px;
-  overflow: hidden;
-  background: var(--gradient-primary, #171717);
+  gap: 60px;
 }
 
-.walikelas-photo-wrap {
+/* ---------- Kolom foto ---------- */
+
+.walikelas-photo-col {
+  position: relative;
+}
+
+/* Offset frame: blok lime tipis mengintip di belakang foto —
+   pengganti shadow/glow untuk memberi kedalaman & karakter grafis. */
+.walikelas-photo-col::before {
+  content: "";
+  position: absolute;
+  inset: 16px -16px -16px 16px;
+  background: var(--color-lime);
+  border-radius: var(--radius-lg);
+  z-index: 0;
+}
+
+.walikelas-photo-frame {
   position: relative;
   z-index: 1;
-  width: 118px;
-  height: 118px;
-  border-radius: 50%;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  border: 3px solid rgba(255, 255, 255, .9);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, .18);
-  background: #f1f3f5;
+  background: var(--color-surface-dark);
+  border: 1px solid rgba(255, 255, 255, .08);
 }
 
 .walikelas-photo {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: top center;
   display: block;
+  filter: grayscale(1) contrast(1.05);
+  transform: scale(1);
+  transition: filter var(--transition-slow), transform var(--transition-slow);
 }
 
-.walikelas-badge {
-  position: relative;
-  z-index: 1;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 13px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, .16);
-  color: #fff;
-  font-size: .68rem;
-  font-weight: 600;
-  letter-spacing: .02em;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .28);
-  white-space: nowrap;
+.walikelas-photo-frame:hover .walikelas-photo,
+.walikelas-photo-frame:focus-within .walikelas-photo {
+  filter: grayscale(0);
+  transform: scale(1.03);
 }
 
-/* Panel kanan: eyebrow + nama + detail */
+.walikelas-marker {
+  position: absolute;
+  z-index: 2;
+  top: 14px;
+  left: 14px;
+  padding: 4px 9px;
+  border-radius: 6px;
+  border: 1px solid rgba(163, 230, 53, .35);
+  background: rgba(23, 23, 23, .7);
+  backdrop-filter: blur(3px);
+  color: var(--color-lime);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .7rem;
+  letter-spacing: .03em;
+}
+
+/* ---------- Kolom informasi ---------- */
+
 .walikelas-info {
-  position: relative;
-  flex: 1;
   min-width: 0;
-  padding: 26px 28px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background: var(--card-bg, #fff);
 }
 
 .walikelas-nama {
+  margin: 0 0 10px;
   font-family: var(--font-main);
-  font-weight: 700;
-  font-size: 1.3rem;
-  margin-bottom: 3px;
+  font-weight: 800;
+  font-size: clamp(1.6rem, 2.6vw + 1rem, 2.4rem);
+  line-height: 1.15;
+  letter-spacing: -.01em;
+  color: #fff;
 }
 
 .walikelas-jabatan {
-  color: var(--color-text-muted, #667085);
-  font-weight: 500;
-  font-size: .85rem;
-  margin-bottom: 16px;
-}
-
-.walikelas-details {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  border-top: 1px solid var(--color-border, #eee);
-}
-
-.walikelas-details li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 11px 0;
-  border-bottom: 1px solid var(--color-border, #eee);
-  font-size: .85rem;
-}
-
-.walikelas-details li span {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
-  color: var(--color-text-muted, #667085);
+  gap: 10px;
+  margin: 0;
+  color: var(--color-muted-gray);
+  font-size: 1rem;
+  font-weight: 500;
 }
 
-.walikelas-details li span i {
-  display: inline-grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 8px;
-  background: var(--color-primary-soft, #eaf2ff);
-  color: var(--color-primary, #84CC16);
-  font-size: .7rem;
+.walikelas-jabatan-dot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-lime);
 }
 
-.walikelas-details li strong { font-weight: 600; text-align: right; }
-
-.walikelas-ig-link {
-  color: var(--color-primary, #84CC16);
+.walikelas-ig {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  margin-top: 20px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid transparent;
+  color: var(--color-muted-gray);
+  font-size: .92rem;
+  font-weight: 600;
   text-decoration: none;
+  transition: color var(--transition), border-color var(--transition);
 }
 
-.walikelas-ig-link:hover { text-decoration: underline; }
+.walikelas-ig i { color: var(--color-lime); font-size: 1rem; }
 
-@media (max-width: 575px) {
-  .walikelas-card { flex-direction: column; max-width: 380px; margin: 0 auto; }
-  .walikelas-visual { flex-direction: row; flex: none; padding: 22px; }
-  .walikelas-photo-wrap { width: 78px; height: 78px; }
-  .walikelas-info { padding: 22px 22px 24px; text-align: left; }
+.walikelas-ig:hover,
+.walikelas-ig:focus-visible {
+  color: #fff;
+  border-color: var(--color-lime);
+}
+
+.walikelas-quote {
+  margin: 22px 0 0;
+  padding-top: 18px;
+  max-width: 46ch;
+  border-top: 1px solid rgba(255, 255, 255, .1);
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 500;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.walikelas-quote::before {
+  margin-right: 3px;
+  color: var(--color-lime);
+  font-style: normal;
+  font-weight: 800;
+  content: "\201C";
+}
+
+/* ---------- Skeleton (dark-aware) ---------- */
+
+.walikelas-skeleton .walikelas-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: center;
+}
+
+.walikelas-skel-line { height: 16px; border-radius: 6px; }
+.walikelas-skel-line.is-wide { width: 68%; height: 32px; }
+.walikelas-skel-line.is-mid { width: 42%; }
+.walikelas-skel-line.is-narrow { width: 30%; margin-top: 8px; }
+
+.walikelas-wrap .skeleton-block {
+  background-color: var(--color-surface-dark);
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, .04) 25%, rgba(255, 255, 255, .14) 37%, rgba(255, 255, 255, .04) 63%);
+  background-size: 400% 100%;
+}
+
+.walikelas-wrap .walikelas-photo-frame.skeleton-block { border-radius: var(--radius-lg); }
+
+/* ---------- Error / empty state (menumpang class .empty-state global) ---------- */
+
+.walikelas-wrap .empty-state strong { display: block; margin-bottom: 6px; color: #fff; font-size: 1.05rem; }
+.walikelas-wrap .empty-state p { margin: 0; font-size: .92rem; }
+
+/* ---------- Tablet ---------- */
+
+@media (max-width: 991.98px) {
+  .walikelas-feature { gap: 40px; }
+}
+
+/* ---------- Mobile: stack, tetap seimbang ---------- */
+
+@media (max-width: 767.98px) {
+  .walikelas-feature { grid-template-columns: 1fr; gap: 30px; }
+  .walikelas-photo-col { width: 100%; max-width: 280px; margin: 0 auto; }
+  .walikelas-info { text-align: center; }
+  .walikelas-jabatan { justify-content: center; }
+  .walikelas-ig { margin-left: auto; margin-right: auto; }
+  .walikelas-quote { margin-left: auto; margin-right: auto; }
 }

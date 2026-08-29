@@ -26,8 +26,8 @@
 }
 .section-dark .empty-state-retry { background: var(--color-lime); color: var(--color-charcoal); border-color: var(--color-lime); }
 .section-dark .empty-state-retry:hover { background: var(--color-lime-dark); border-color: var(--color-lime-dark); }
-.section-dark .walikelas-jabatan,
-.section-dark .walikelas-details li span { color: var(--color-text-muted); }
+/* Note: Wali Kelas info colors are now defined directly in walikelas.css
+   (component is dark-first, always rendered on .section-dark). */
 
 /* Gallery contrast on the dark background */
 .section-dark .gallery-page-btn { color: var(--color-muted-gray); }
