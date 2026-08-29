@@ -82,14 +82,13 @@ function openStudentModal(student) {
 
   const portofolioBtn = document.getElementById("modalPortofolio");
   const igRow = document.getElementById("modalIgRow");
+  igRow.hidden = !student.ig;
   if (student.portofolio) {
     portofolioBtn.hidden = false;
     portofolioBtn.onclick = () => window.open(student.portofolio, "_blank", "noopener");
-    igRow.hidden = true;
   } else {
     portofolioBtn.hidden = true;
     portofolioBtn.onclick = null;
-    igRow.hidden = false;
   }
 
   const laguSrc = SPECIAL_STUDENT_SONGS[student.nama.trim().toLowerCase()];
