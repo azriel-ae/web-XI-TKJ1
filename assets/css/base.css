@@ -1,14 +1,14 @@
 body {
   overflow-x: hidden;
   background:
-    radial-gradient(620px circle at 8% -6%, rgba(37, 99, 235, 0.06), transparent 60%),
-    radial-gradient(560px circle at 96% 12%, rgba(37, 99, 235, 0.05), transparent 55%),
+    radial-gradient(620px circle at 8% -6%, rgba(47, 143, 239, 0.06), transparent 60%),
+    radial-gradient(560px circle at 96% 12%, rgba(47, 143, 239, 0.05), transparent 55%),
     var(--color-background);
 }
 .section { position: relative; padding: 68px 0; }
 .section-alt {
   background:
-    radial-gradient(rgba(37, 99, 235, .07) 1px, transparent 1px) 0 0/22px 22px,
+    radial-gradient(rgba(47, 143, 239, .07) 1px, transparent 1px) 0 0/22px 22px,
     var(--color-background-alt);
 }
 .section-head { max-width: 680px; margin: 0 auto 34px; text-align: center; }

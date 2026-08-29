@@ -77,3 +77,12 @@ button, a.btn, .btn-primary-custom, .btn-outline-custom, .nav-social, .siswa-car
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
 }
+
+/* --- Focus state yang jelas untuk keyboard navigation (aksesibilitas) --- */
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible,
+.btn-primary-custom:focus-visible, .btn-outline-custom:focus-visible,
+.nav-link:focus-visible, .siswa-card:focus-visible, .gallery-card:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}

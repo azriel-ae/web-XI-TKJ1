@@ -1,10 +1,10 @@
 :root {
-  /* Biru — warna utama, dipertahankan sebagai identitas situs */
-  --color-primary: #2563eb;
-  --color-primary-light: #5b8def;
-  --color-primary-dark: #1e3a5f;
-  --color-primary-soft: #eaf2ff;
-  --color-primary-soft-2: #dbe8ff;
+  /* Biru muda — warna utama, dipertahankan sebagai identitas situs */
+  --color-primary: #2f8fef;
+  --color-primary-light: #7cc0ff;
+  --color-primary-dark: #1d63c9;
+  --color-primary-soft: #eaf5ff;
+  --color-primary-soft-2: #d9ecff;
 
   /* Emas lembut — aksen kedua, dipakai tipis-tipis untuk penekanan (badge, ikon terpilih, garis pemisah) */
   --color-accent: #c8952e;
@@ -19,19 +19,23 @@
   --color-text: #172033;
   --color-text-muted: #667085;
   --color-border: #e5eaf1;
-  --color-footer: #0d2242;
+  --color-footer: #2f74d9;
 
-  --gradient-primary: linear-gradient(135deg, #2f6df0 0%, #1e3a5f 100%);
-  --gradient-soft: linear-gradient(160deg, #eef4ff 0%, #ffffff 60%);
-  --gradient-footer: linear-gradient(160deg, #123361 0%, #0a1c38 100%);
+  --gradient-primary: linear-gradient(135deg, #5cb2fb 0%, #2f74d9 100%);
+  --gradient-soft: linear-gradient(160deg, #eaf5ff 0%, #ffffff 60%);
+  --gradient-footer: linear-gradient(160deg, #3f8bef 0%, #1d5fd6 100%);
   --gradient-accent: linear-gradient(135deg, #dcab52 0%, #a97c2f 100%);
+
+  /* Biru tua — khusus dipakai untuk aksen widget "Masukan" di footer */
+  --color-navy: #1d4ed8;
+  --gradient-navy: linear-gradient(135deg, #1d4ed8 0%, #0f2f6e 100%);
 
   --radius-sm: 10px;
   --radius-md: 16px;
   --radius-lg: 24px;
   --shadow-sm: 0 8px 24px rgba(16, 39, 70, 0.08);
   --shadow-md: 0 16px 36px rgba(16, 39, 70, 0.12);
-  --shadow-glow: 0 18px 40px rgba(37, 99, 235, 0.16);
+  --shadow-glow: 0 18px 40px rgba(47, 143, 239, 0.18);
   --container-width: 1140px;
   --transition: 200ms ease;
   --transition-slow: 320ms cubic-bezier(.22,.61,.36,1);

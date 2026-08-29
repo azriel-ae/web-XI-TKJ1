@@ -24,7 +24,7 @@
 
   padding: 0;
 
-  border: 1px solid rgba(37, 99, 235, 0.25);
+  border: 1px solid rgba(47, 143, 239, 0.25);
   border-radius: 50%;
 
   background: linear-gradient(
@@ -38,7 +38,7 @@
   cursor: pointer;
 
   box-shadow:
-    0 8px 25px rgba(37, 99, 235, 0.28),
+    0 8px 25px rgba(47, 143, 239, 0.28),
     0 2px 8px rgba(0, 0, 0, 0.08);
 
   transition:
@@ -50,7 +50,7 @@
   transform: translateY(-3px);
 
   box-shadow:
-    0 12px 30px rgba(37, 99, 235, 0.35),
+    0 12px 30px rgba(47, 143, 239, 0.35),
     0 4px 10px rgba(0, 0, 0, 0.08);
 }
 
@@ -321,7 +321,7 @@
 
   background: #eef4ff;
 
-  border: 1px solid rgba(37, 99, 235, 0.18);
+  border: 1px solid rgba(47, 143, 239, 0.18);
 }
 
 .chat-message-avatar svg {
@@ -381,7 +381,7 @@
   border-bottom-right-radius: 5px;
 
   box-shadow:
-    0 4px 12px rgba(37, 99, 235, 0.16);
+    0 4px 12px rgba(47, 143, 239, 0.16);
 }
 
 
@@ -500,7 +500,7 @@
   border-color: #2563eb;
 
   box-shadow:
-    0 0 0 3px rgba(37, 99, 235, 0.08);
+    0 0 0 3px rgba(47, 143, 239, 0.08);
 }
 
 

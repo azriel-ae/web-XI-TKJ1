@@ -9,6 +9,20 @@
   color: #fff;
   background: var(--gradient-primary);
 }
+/* Watermark logo sekolah — samar di belakang konten, jadi identitas visual
+   tanpa mengganggu keterbacaan teks (opacity rendah + di-mute oleh overlay). */
+.about-main--photo::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -36px;
+  width: 300px;
+  height: 300px;
+  transform: translateY(-50%);
+  background: url("../img/logo/smkn1gempol.png") no-repeat center / contain;
+  opacity: .15;
+  pointer-events: none;
+}
 .about-main--photo::after {
   content: "";
   position: absolute;
@@ -58,10 +72,13 @@
 .about-body { padding: 36px 34px; }
 .about-body p { margin: 0; color: rgba(255, 255, 255, .86); }
 
-/* Highlight ringkas: pengganti stat sederhana, tampil sebagai chip berikon */
+/* Highlight ringkas: pengganti stat sederhana, tampil sebagai chip berikon.
+   Pakai CSS grid (bukan flex-grow) supaya saat item ganjil "nyisa" di baris
+   terakhir (mis. di lebar tablet), chip itu TIDAK melebar penuh satu baris —
+   ia tetap seukuran kolom lain dan sisa ruang di baris itu dibiarkan kosong. */
 .about-highlights {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 12px;
   margin-top: 22px;
 }
@@ -73,7 +90,6 @@
   border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, .08);
   border: 1px solid rgba(255, 255, 255, .16);
-  flex: 1 1 150px;
   transition: background var(--transition), transform var(--transition);
 }
 .about-highlight:hover { background: rgba(255, 255, 255, .13); transform: translateY(-2px); }
@@ -92,10 +108,13 @@
 .about-highlight span { color: rgba(255, 255, 255, .68); font-size: .72rem; }
 
 .icon-box--light { background: rgba(255, 255, 255, .16); color: #fff; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .25); }
+.icon-box--logo { padding: 6px; overflow: hidden; }
+.icon-box--logo img { width: 100%; height: 100%; object-fit: contain; }
 
 @media (max-width: 767px) {
   .about-main-grid { grid-template-columns: 1fr; }
   .about-visual { border-right: none; border-bottom: 1px solid rgba(255, 255, 255, .16); padding: 32px 24px 22px; }
   .about-body { padding: 26px 24px 30px; text-align: center; }
   .about-highlights { justify-content: center; }
+  .about-main--photo::before { width: 230px; height: 230px; top: 50%; left: 50%; right: auto; transform: translate(-50%, -50%); }
 }
