@@ -32,7 +32,7 @@
   --color-text: var(--color-charcoal);
   --color-text-muted: var(--color-gray);
   --color-border: var(--color-light-gray);
-  --color-footer: var(--color-charcoal);
+  --color-footer: var(--color-soft-black);
 
   /* Gradients kept minimal / mostly disabled per "no AI-slop gradients" rule */
   --gradient-primary: var(--color-charcoal);

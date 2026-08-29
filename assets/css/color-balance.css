@@ -1,0 +1,65 @@
+/* ==========================================================================
+   COLOR BALANCE — final visual polish layer.
+   Adds section-level background rhythm (dark / off-white alternation) so the
+   page isn't dominated by white. Loaded last; only touches background/text
+   color and contrast — no layout, structure, or feature changes.
+   ========================================================================== */
+
+/* --- Off-white sections (Tentang Kami, Daftar Siswa) --- */
+.section-offwhite { background: var(--color-offwhite); }
+
+/* --- Dark charcoal sections (Wali Kelas, Galeri) --- */
+.section-dark { background: var(--color-charcoal); }
+.section-dark .section-tag,
+.section-dark .section-tag--accent {
+  background: rgba(163, 230, 53, .12);
+  border-color: rgba(163, 230, 53, .28);
+  color: var(--color-lime);
+}
+.section-dark .section-title { color: #fff; }
+.section-dark .section-title .text-primary-custom { color: var(--color-lime); }
+.section-dark .section-subtitle { color: var(--color-muted-gray); }
+.section-dark .empty-state {
+  background: rgba(255, 255, 255, .03);
+  border-color: rgba(255, 255, 255, .14);
+  color: var(--color-muted-gray);
+}
+.section-dark .empty-state-retry { background: var(--color-lime); color: var(--color-charcoal); border-color: var(--color-lime); }
+.section-dark .empty-state-retry:hover { background: var(--color-lime-dark); border-color: var(--color-lime-dark); }
+.section-dark .walikelas-jabatan,
+.section-dark .walikelas-details li span { color: var(--color-text-muted); }
+
+/* Gallery contrast on the dark background */
+.section-dark .gallery-page-btn { color: var(--color-muted-gray); }
+.section-dark .gallery-page-btn:hover { color: var(--color-lime); }
+.section-dark .gallery-page-btn.is-active { color: var(--color-lime); border-bottom-color: var(--color-lime); }
+.section-dark .gallery-nav-btn { color: var(--color-lime); }
+.section-dark .gallery-nav-btn:hover:not(:disabled) { color: #fff; }
+.section-dark .gallery-nav-btn:disabled { color: var(--color-gray); }
+
+/* --- Dark surface sections (Kontak) — one step lighter than charcoal --- */
+.section-darksurface { background: var(--color-surface-dark); }
+.section-darksurface .section-tag {
+  background: rgba(163, 230, 53, .12);
+  border-color: rgba(163, 230, 53, .28);
+  color: var(--color-lime);
+}
+.section-darksurface .section-title { color: #fff; }
+.section-darksurface .section-title .text-primary-custom { color: var(--color-lime); }
+.section-darksurface .section-subtitle { color: var(--color-muted-gray); }
+
+.section-darksurface .contact-card { background: var(--color-charcoal); border-color: rgba(255, 255, 255, .08); }
+.section-darksurface .contact-card:hover { border-color: var(--color-lime); }
+.section-darksurface .contact-card-body h3 { color: #fff; }
+.section-darksurface .contact-card-body p { color: var(--color-muted-gray); }
+.section-darksurface .contact-arrow { color: var(--color-muted-gray); }
+.section-darksurface .contact-card:hover .contact-arrow { color: var(--color-lime); }
+.section-darksurface .contact-shot-fallback {
+  background: var(--color-charcoal);
+  color: var(--color-muted-gray);
+}
+.section-darksurface .contact-shot-fallback code { color: var(--color-lime); }
+.section-darksurface .icon-box { background: rgba(163, 230, 53, .12); color: var(--color-lime); }
+
+/* --- Hero divider should blend into the section right below it --- */
+.hero-divider { fill: var(--color-offwhite) !important; }
