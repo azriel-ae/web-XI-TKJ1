@@ -47,8 +47,9 @@ function initials(name) {
 
 function renderStudents(items) {
   const container = document.getElementById("siswaList");
+  if (!container.classList.contains("row")) { container.className = "row g-3"; }
   if (!items.length) {
-    container.innerHTML = '<div class="col-12"><div class="empty-state">Siswa tidak ditemukan.</div></div>';
+    container.innerHTML = '<div class="col-12"><div class="empty-state"><i class="fa-regular fa-face-frown"></i>Siswa tidak ditemukan.</div></div>';
     return;
   }
   container.innerHTML = items.map(student => `
@@ -116,7 +117,8 @@ async function initStudents() {
     studentData = await response.json();
     renderStudents(studentData);
   } catch (error) {
-    container.innerHTML = `<div class="col-12"><div class="empty-state">${error.message}. Jalankan website lewat server, bukan membuka index.html langsung.</div></div>`;
+    container.className = "row g-3";
+    container.innerHTML = `<div class="col-12"><div class="empty-state is-error"><i class="fa-regular fa-circle-exclamation"></i>${error.message}. Jalankan website lewat server, bukan membuka index.html langsung.<br><button type="button" class="empty-state-retry" onclick="initStudents()"><i class="fa-solid fa-rotate-right"></i> Coba Lagi</button></div></div>`;
     return;
   }
 

@@ -24,14 +24,14 @@
   height: 22px;
   padding: 0 5px;
   border-radius: 999px;
-  background: var(--color-accent-soft, #fbf1de);
-  color: var(--color-accent-dark, #9c7222);
+  background: var(--color-accent-soft, #eef7db);
+  color: var(--color-accent-dark, #65A30D);
   font-size: .68rem;
   font-weight: 700;
-  box-shadow: inset 0 0 0 1px var(--color-accent-soft-2, #f5e3bf);
+  box-shadow: inset 0 0 0 1px var(--color-accent-soft-2, #e4f2c4);
 }
 .siswa-avatar { width: 72px; height: 72px; display: grid; place-items: center; overflow: hidden; margin: 0 auto 12px; border-radius: 50%; background: var(--color-primary-soft); color: var(--color-primary); font-weight: 700; box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--color-primary-soft-2); transition: box-shadow var(--transition), transform var(--transition); }
-.siswa-card:hover .siswa-avatar { box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--color-primary), 0 0 16px 2px rgba(200, 149, 46, .26); transform: scale(1.04); }
+.siswa-card:hover .siswa-avatar { box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--color-primary), 0 0 16px 2px rgba(163, 230, 53, .35); transform: scale(1.04); }
 .siswa-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .siswa-name { min-height: 42px; margin: 0; font-size: .87rem; font-weight: 600; line-height: 1.45; }
 .siswa-meta { display: inline-flex; align-items: center; gap: 5px; margin: 6px 0 0; color: var(--color-text-muted); font-size: .72rem; }
@@ -69,13 +69,13 @@
   border-radius: 50%;
   background: #fff;
   border: 4px solid #fff;
-  box-shadow: 0 6px 18px rgba(16, 39, 70, .18);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .16);
 }
 
 .student-modal-body { padding: 56px 26px 26px; }
 
 .student-modal-name {
-  font-family: "Poppins", sans-serif;
+  font-family: var(--font-main);
   font-weight: 700;
   font-size: 1.15rem;
   margin: 0 0 8px;

@@ -26,4 +26,4 @@
 .contact-card-body p { margin: 0; color: var(--color-text-muted); font-size: .86rem; }
 .contact-arrow { margin-left: auto; color: var(--color-text-muted); transition: color var(--transition), transform var(--transition); }
 .contact-card:hover .contact-arrow { color: var(--color-primary); transform: translate(2px, -2px); }
-.contact-card:hover .icon-box { background: var(--gradient-primary); color: #fff; }
+.contact-card:hover .icon-box { background: var(--color-lime); color: var(--color-charcoal); }

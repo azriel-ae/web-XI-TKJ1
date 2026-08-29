@@ -143,8 +143,8 @@ function initChatbot() {
     row.innerHTML = `
       <div class="chat-message-avatar">
         <svg viewBox="0 0 64 64" fill="none">
-          <line x1="32" y1="12" x2="32" y2="7" stroke="#172554" stroke-width="2.4" stroke-linecap="round"/>
-          <circle cx="32" cy="5.5" r="2.6" fill="#38bdf8"/>
+          <line x1="32" y1="12" x2="32" y2="7" stroke="#171717" stroke-width="2.4" stroke-linecap="round"/>
+          <circle cx="32" cy="5.5" r="2.6" fill="#A3E635"/>
 
           <rect
             x="13"
@@ -152,14 +152,14 @@ function initChatbot() {
             width="38"
             height="30"
             rx="13"
-            fill="#172554"
+            fill="#171717"
           />
 
-          <rect x="8" y="24" width="5" height="10" rx="2.5" fill="#172554"/>
-          <rect x="51" y="24" width="5" height="10" rx="2.5" fill="#172554"/>
+          <rect x="8" y="24" width="5" height="10" rx="2.5" fill="#171717"/>
+          <rect x="51" y="24" width="5" height="10" rx="2.5" fill="#171717"/>
 
           <circle cx="24" cy="29" r="3.6" fill="#ffffff"/>
-          <circle cx="40" cy="29" r="3.6" fill="#38bdf8"/>
+          <circle cx="40" cy="29" r="3.6" fill="#A3E635"/>
 
           <path
             d="M24 37C27 39.5 37 39.5 40 37"
@@ -200,8 +200,8 @@ function initChatbot() {
   row.innerHTML = `
     <div class="chat-message-avatar">
       <svg viewBox="0 0 64 64" fill="none">
-        <line x1="32" y1="12" x2="32" y2="7" stroke="#172554" stroke-width="2.4" stroke-linecap="round"/>
-        <circle cx="32" cy="5.5" r="2.6" fill="#38bdf8"/>
+        <line x1="32" y1="12" x2="32" y2="7" stroke="#171717" stroke-width="2.4" stroke-linecap="round"/>
+        <circle cx="32" cy="5.5" r="2.6" fill="#A3E635"/>
 
         <rect
           x="13"
@@ -209,14 +209,14 @@ function initChatbot() {
           width="38"
           height="30"
           rx="13"
-          fill="#172554"
+          fill="#171717"
         />
 
-        <rect x="8" y="24" width="5" height="10" rx="2.5" fill="#172554"/>
-        <rect x="51" y="24" width="5" height="10" rx="2.5" fill="#172554"/>
+        <rect x="8" y="24" width="5" height="10" rx="2.5" fill="#171717"/>
+        <rect x="51" y="24" width="5" height="10" rx="2.5" fill="#171717"/>
 
         <circle cx="24" cy="29" r="3.6" fill="#ffffff"/>
-        <circle cx="40" cy="29" r="3.6" fill="#38bdf8"/>
+        <circle cx="40" cy="29" r="3.6" fill="#A3E635"/>
       </svg>
     </div>
 

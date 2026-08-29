@@ -13,7 +13,7 @@ html { scrollbar-color: var(--color-primary-light) var(--color-background-alt); 
 ::-webkit-scrollbar-thumb:hover { background: var(--color-primary-light); }
 
 /* --- Konsistensi tipografi: judul & paragraf tidak "melompat" antar breakpoint --- */
-h1, h2, h3, h4, h5, h6 { font-family: "Poppins", sans-serif; }
+h1, h2, h3, h4, h5, h6 { font-family: var(--font-main); }
 p { line-height: 1.7; }
 .section-subtitle { line-height: 1.7; }
 
@@ -35,6 +35,31 @@ button, a.btn, .btn-primary-custom, .btn-outline-custom, .nav-social, .siswa-car
 
 /* --- Loading state generik dipakai beberapa komponen (gallery, feedback, dsb) --- */
 .empty-state i { display: block; margin-bottom: 8px; font-size: 1.4rem; opacity: .55; }
+.empty-state.is-error { border-style: solid; border-color: var(--color-light-gray); }
+.empty-state-retry {
+  display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; padding: 9px 18px;
+  border: 1px solid var(--color-charcoal); border-radius: var(--radius-sm); background: var(--color-charcoal);
+  color: #fff; font-weight: 600; font-size: .85rem; cursor: pointer; transition: var(--transition);
+}
+.empty-state-retry:hover { background: var(--color-soft-black); }
+
+/* --- Skeleton loading (dipakai sebagai pengganti teks "Memuat...") --- */
+.skeleton-block {
+  border-radius: var(--radius-md);
+  background: linear-gradient(90deg, var(--color-light-gray) 25%, #f0f0eb 37%, var(--color-light-gray) 63%);
+  background-size: 400% 100%;
+  animation: skeleton-shimmer 1.4s ease infinite;
+}
+.skeleton-walikelas { height: 190px; max-width: 660px; margin: 0 auto; }
+.skeleton-siswa-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+.skeleton-siswa-grid .skeleton-block { height: 150px; border-radius: var(--radius-md); }
+@keyframes skeleton-shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-block { animation: none; }
+}
 
 /* --- Navbar: cegah teks brand terpotong di layar sangat sempit --- */
 .navbar-brand { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }

@@ -68,7 +68,7 @@ async function initGallery() {
     if (!items.length) throw new Error("Belum ada foto galeri");
     renderPage();
   } catch (error) {
-    container.innerHTML = `<div class="col-12"><div class="empty-state">${error.message}</div></div>`;
+    container.innerHTML = `<div class="col-12"><div class="empty-state${error.message.includes("Belum ada") ? "" : " is-error"}"><i class="fa-regular fa-image"></i>${error.message}${error.message.includes("Belum ada") ? "" : `<br><button type="button" class="empty-state-retry" onclick="initGallery()"><i class="fa-solid fa-rotate-right"></i> Coba Lagi</button>`}</div></div>`;
     return;
   }
 

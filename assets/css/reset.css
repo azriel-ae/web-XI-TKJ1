@@ -1,6 +1,6 @@
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: 78px; }
-body { margin: 0; font-family: "Poppins", sans-serif; background: var(--color-background); color: var(--color-text); }
+body { margin: 0; font-family: var(--font-main); background: var(--color-background); color: var(--color-text); }
 img { display: block; max-width: 100%; }
 a { color: inherit; }
 button, input, textarea { font: inherit; }

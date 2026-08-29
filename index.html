@@ -3,12 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Website resmi kelas XI TKJ 1 SMKN 1 Gempol">
-  <title>XI TKJ 1 | SMKN 1 Gempol</title>
+  <meta name="description" content="Website resmi kelas XI TKJ 1 SMKN 1 Gempol — profil kelas, wali kelas, daftar siswa, dan dokumentasi kegiatan jurusan Teknik Komputer dan Jaringan.">
+  <title>XI TKJ 1 — SMKN 1 Gempol</title>
+
+  <link rel="icon" type="image/png" href="assets/img/logo/smkn1gempol.png">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="XI TKJ 1 — SMKN 1 Gempol">
+  <meta property="og:description" content="Website resmi kelas XI TKJ 1 SMKN 1 Gempol — profil kelas, wali kelas, daftar siswa, dan dokumentasi kegiatan jurusan Teknik Komputer dan Jaringan.">
+  <meta property="og:image" content="assets/img/logo/smkn1gempol.png">
+  <meta name="twitter:card" content="summary">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 
@@ -40,7 +48,7 @@
 
     <svg viewBox="0 0 64 64" fill="none">
       <line x1="32" y1="12" x2="32" y2="7" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round"/>
-      <circle cx="32" cy="5.5" r="2.6" fill="#38bdf8"/>
+      <circle cx="32" cy="5.5" r="2.6" fill="#A3E635"/>
 
       <rect
         x="13"
@@ -56,7 +64,7 @@
       <rect x="51" y="24" width="5" height="10" rx="2.5" fill="#ffffff"/>
 
       <circle cx="24" cy="29" r="3.4" fill="#ffffff"/>
-      <circle cx="40" cy="29" r="3.4" fill="#38bdf8"/>
+      <circle cx="40" cy="29" r="3.4" fill="#A3E635"/>
 
       <path
         d="M24 37C27 39.5 37 39.5 40 37"
@@ -79,7 +87,7 @@
 
         <svg viewBox="0 0 64 64" fill="none">
           <line x1="32" y1="12" x2="32" y2="7" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round"/>
-          <circle cx="32" cy="5.5" r="2.6" fill="#38bdf8"/>
+          <circle cx="32" cy="5.5" r="2.6" fill="#A3E635"/>
 
           <rect
             x="13"
@@ -95,7 +103,7 @@
           <rect x="51" y="24" width="5" height="10" rx="2.5" fill="#ffffff"/>
 
           <circle cx="24" cy="29" r="3.4" fill="#ffffff"/>
-          <circle cx="40" cy="29" r="3.4" fill="#38bdf8"/>
+          <circle cx="40" cy="29" r="3.4" fill="#A3E635"/>
 
           <path
             d="M24 37C27 39.5 37 39.5 40 37"
@@ -139,10 +147,10 @@
               width="38"
               height="30"
               rx="12"
-              fill="#172554"
+              fill="#171717"
             />
-            <circle cx="24" cy="33" r="4" fill="#38bdf8"/>
-            <circle cx="40" cy="33" r="4" fill="#38bdf8"/>
+            <circle cx="24" cy="33" r="4" fill="#A3E635"/>
+            <circle cx="40" cy="33" r="4" fill="#A3E635"/>
             <path
               d="M27 41C30 43 34 43 37 41"
               stroke="#ffffff"
@@ -291,7 +299,7 @@
           </div>
         </div>
         <div class="section-head mt-5 reveal"><span class="section-tag">Wali Kelas</span><h2 class="section-title">Wali <span class="text-primary-custom">Kelas</span></h2></div>
-        <div id="walikelasWrap" class="walikelas-wrap reveal"><div class="empty-state">Memuat data wali kelas...</div></div>
+        <div id="walikelasWrap" class="walikelas-wrap reveal"><div class="skeleton-block skeleton-walikelas" role="status" aria-label="Memuat data wali kelas"></div></div>
       </div>
     </section>
 
@@ -304,7 +312,7 @@
             <input id="studentSearch" class="student-search" type="search" placeholder="Cari nama siswa..." aria-label="Cari siswa">
           </div>
         </div>
-        <div id="siswaList" class="row g-3"><div class="col-12"><div class="empty-state">Memuat data siswa...</div></div></div>
+        <div id="siswaList" class="row g-3" role="status" aria-label="Memuat data siswa"><div class="col-6 col-md-4 col-lg-3"><div class="skeleton-block" style="height:170px"></div></div><div class="col-6 col-md-4 col-lg-3"><div class="skeleton-block" style="height:170px"></div></div><div class="col-6 col-md-4 col-lg-3"><div class="skeleton-block" style="height:170px"></div></div><div class="col-6 col-md-4 col-lg-3"><div class="skeleton-block" style="height:170px"></div></div></div>
       </div>
     </section>
 

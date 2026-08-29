@@ -14,7 +14,7 @@ async function initWalikelas() {
     const data = await response.json();
     wrap.innerHTML = buildWalikelasCard(data);
   } catch (error) {
-    wrap.innerHTML = `<div class="empty-state">${error.message}. Jalankan website lewat server, bukan membuka index.html langsung.</div>`;
+    wrap.innerHTML = `<div class="empty-state is-error"><i class="fa-regular fa-circle-exclamation"></i>${error.message}. Jalankan website lewat server, bukan membuka index.html langsung.<br><button type="button" class="empty-state-retry" onclick="initWalikelas()"><i class="fa-solid fa-rotate-right"></i> Coba Lagi</button></div>`;
   }
 }
 
