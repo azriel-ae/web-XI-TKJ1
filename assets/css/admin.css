@@ -682,37 +682,3 @@
   .admin-card { padding: 20px; }
   .admin-auth-card { padding: 32px 24px; }
 }
-/* =====================================================================
-   Admin visual refresh — aligned with the light-blue public site theme
-   ===================================================================== */
-:root {
-  --admin-primary: #3b82f6;
-  --admin-primary-hover: #2f82c4;
-  --admin-primary-soft: #eaf5ff;
-  --admin-bg: #f3f9fd;
-  --admin-navbar-bg: #174e75;
-  --admin-text-main: #183750;
-  --admin-text-muted: #6b8295;
-  --admin-border: #dceaf4;
-  --admin-border-focus: #8ec3e8;
-  --admin-radius-sm: 10px;
-  --admin-radius-md: 15px;
-  --admin-radius-lg: 22px;
-  --admin-shadow-sm: 0 8px 22px rgba(40,91,132,.06);
-  --admin-shadow: 0 16px 34px rgba(40,91,132,.10);
-  --admin-shadow-lg: 0 24px 56px rgba(40,91,132,.13);
-}
-.admin-topbar {
-  background: linear-gradient(135deg,#1d5a86,#174e75);
-  border-bottom: 1px solid rgba(255,255,255,.08);
-}
-.brand-logo { background: #5aa9e6; box-shadow: 0 8px 20px rgba(90,169,230,.24); }
-.admin-auth { background: radial-gradient(circle at top right, rgba(90,169,230,.12), transparent 40%), #f3f9fd; }
-.admin-auth-card, .admin-card { border-color: #dceaf4; box-shadow: var(--admin-shadow-sm); }
-.admin-auth-card:hover, .admin-card:hover { box-shadow: var(--admin-shadow); }
-.admin-auth-icon { background: #eaf5ff; color: #2f82c4; border: 1px solid #d7ebfb; }
-.admin-card-header h2 i, .admin-back-link:hover { color: #2f82c4; }
-.admin-btn-primary { background: linear-gradient(135deg,#62afe9,#2f82c4) !important; border-color: transparent !important; box-shadow: 0 10px 22px rgba(47,130,196,.16); }
-.admin-btn-primary:hover { background: linear-gradient(135deg,#57a4df,#2874af) !important; }
-.admin-field input:focus, .admin-field select:focus, .admin-field textarea:focus { border-color: #8ec3e8 !important; box-shadow: 0 0 0 4px #eaf5ff !important; }
-.admin-siswa-card, .admin-gallery-item, .admin-list-item { border-color: #dceaf4 !important; }
