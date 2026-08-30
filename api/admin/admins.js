@@ -1,8 +1,14 @@
 // =========================
 // API: /api/admin/admins (khusus owner: azriel & david)
 // GET    -> daftar akun admin (tanpa password)
+//           GET ?resource=activity-log -> daftar log aktivitas panel admin
 // POST   -> buat akun admin baru (body: { username, password })
 // DELETE -> hapus akun admin tambahan (body: { username })
+//
+// CATATAN: log aktivitas sengaja digabung ke file ini (bukan file API
+// terpisah) karena paket Vercel Hobby dibatasi maksimal 12 Serverless
+// Functions per deployment (1 file di /api = 1 function). Menambah file
+// baru akan melewati batas itu dan bikin deploy gagal.
 // =========================
 
 const {
@@ -12,7 +18,20 @@ const {
     createAdminAccount,
     deleteAdminAccount
 } = require("../../lib/auth");
-const { logActivity } = require("../../lib/activityLog");
+const { logActivity, getActivityLog } = require("../../lib/activityLog");
+
+// Ambil query string manual dari req.url. Tidak pakai req.query karena
+// itu hanya otomatis terisi di runtime Vercel — waktu dites lokal lewat
+// server.js, req.query tidak pernah di-set (lihat lib/http.js), jadi
+// perlu diparse sendiri supaya perilakunya sama di kedua environment.
+function getQueryParam(req, key) {
+    try {
+        const url = new URL(req.url, "http://localhost");
+        return url.searchParams.get(key);
+    } catch {
+        return null;
+    }
+}
 
 module.exports = async function handler(req, res) {
     const admin = getLoggedInAdmin(req);
@@ -25,6 +44,14 @@ module.exports = async function handler(req, res) {
     }
 
     if (req.method === "GET") {
+        const resource = getQueryParam(req, "resource");
+
+        if (resource === "activity-log") {
+            res.setHeader("Cache-Control", "no-store");
+            const log = await getActivityLog();
+            return res.status(200).json(log);
+        }
+
         const admins = await listAdminAccounts();
         return res.status(200).json(admins);
     }

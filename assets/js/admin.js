@@ -778,7 +778,7 @@
     if (!tableBody) return;
     tableBody.innerHTML = activityLogSkeletonRows(5);
     try {
-      const log = await api("/api/admin/activity-log");
+      const log = await api("/api/admin/admins?resource=activity-log");
       renderActivityLog(log);
     } catch (error) {
       tableBody.innerHTML = `<tr><td colspan="4">
