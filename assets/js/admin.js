@@ -12,6 +12,21 @@
     });
   }
 
+  function formatFileSize(bytes) {
+    if (!bytes && bytes !== 0) return "";
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  }
+
+  function escapeHtml(str) {
+    return String(str == null ? "" : str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
   function setStatus(el, message, kind) {
     el.textContent = message || "";
     el.classList.remove("is-error", "is-success");
@@ -36,6 +51,119 @@
     return data;
   }
 
+  // ---------- toast notifications ----------
+  const toastContainer = document.getElementById("toastContainer");
+
+  function showToast(message, kind) {
+    const toast = document.createElement("div");
+    toast.className = `admin-toast ${kind === "error" ? "is-error" : "is-success"}`;
+    const icon = kind === "error" ? "fa-circle-exclamation" : "fa-circle-check";
+    toast.innerHTML = `<i class="fa-solid ${icon}"></i><span></span><button type="button" class="admin-toast-close" aria-label="Tutup notifikasi"><i class="fa-solid fa-xmark"></i></button>`;
+    toast.querySelector("span").textContent = message;
+
+    const removeToast = () => {
+      toast.classList.add("is-leaving");
+      setTimeout(() => toast.remove(), 180);
+    };
+    toast.querySelector(".admin-toast-close").addEventListener("click", removeToast);
+    toastContainer.appendChild(toast);
+    setTimeout(removeToast, 4000);
+  }
+
+  // ---------- generic confirm modal ----------
+  const confirmModal = document.getElementById("confirmModal");
+  const confirmModalTitle = document.getElementById("confirmModalTitle");
+  const confirmModalBody = document.getElementById("confirmModalBody");
+  const confirmModalOk = document.getElementById("confirmModalOk");
+  const confirmModalCancel = document.getElementById("confirmModalCancel");
+
+  function askConfirm({ title, body, okLabel }) {
+    return new Promise(resolve => {
+      confirmModalTitle.textContent = title;
+      confirmModalBody.textContent = body;
+      confirmModalOk.textContent = okLabel || "Hapus";
+
+      function cleanup(result) {
+        confirmModal.classList.remove("is-open");
+        confirmModal.setAttribute("aria-hidden", "true");
+        confirmModalOk.removeEventListener("click", onOk);
+        confirmModalCancel.removeEventListener("click", onCancel);
+        confirmModal.querySelector("[data-confirm-cancel]").removeEventListener("click", onCancel);
+        resolve(result);
+      }
+      function onOk() { cleanup(true); }
+      function onCancel() { cleanup(false); }
+
+      confirmModalOk.addEventListener("click", onOk);
+      confirmModalCancel.addEventListener("click", onCancel);
+      confirmModal.querySelector("[data-confirm-cancel]").addEventListener("click", onCancel);
+
+      confirmModal.classList.add("is-open");
+      confirmModal.setAttribute("aria-hidden", "false");
+    });
+  }
+
+  // ---------- password show/hide ----------
+  function wirePasswordToggle(inputId, toggleId) {
+    const input = document.getElementById(inputId);
+    const toggle = document.getElementById(toggleId);
+    if (!input || !toggle) return;
+    toggle.addEventListener("click", () => {
+      const showing = input.type === "text";
+      input.type = showing ? "password" : "text";
+      toggle.innerHTML = showing ? '<i class="fa-regular fa-eye"></i>' : '<i class="fa-regular fa-eye-slash"></i>';
+    });
+  }
+  wirePasswordToggle("loginPassword", "loginPasswordToggle");
+  wirePasswordToggle("newAdminPassword", "newAdminPasswordToggle");
+
+  // ---------- sidebar navigation ----------
+  const sidebar = document.getElementById("adminSidebar");
+  const sidebarOverlay = document.getElementById("sidebarOverlay");
+  const sidebarToggle = document.getElementById("sidebarToggle");
+  const panelTitleEl = document.getElementById("panelTitle");
+  const panelSubtitleEl = document.getElementById("panelSubtitle");
+
+  const panelMeta = {
+    dashboard: { title: "Dashboard", subtitle: "Kelola konten website XI TKJ 1." },
+    galeri: { title: "Galeri", subtitle: "Tambahkan dan kelola foto galeri kelas." },
+    siswa: { title: "Siswa", subtitle: "Cari dan ubah data atau pasfoto siswa." },
+    admin: { title: "Manajemen Admin", subtitle: "Kelola akun yang memiliki akses ke panel admin." }
+  };
+
+  function openSidebar() {
+    sidebar.classList.add("is-open");
+    sidebarOverlay.classList.add("is-open");
+  }
+  function closeSidebar() {
+    sidebar.classList.remove("is-open");
+    sidebarOverlay.classList.remove("is-open");
+  }
+  sidebarToggle.addEventListener("click", openSidebar);
+  sidebarOverlay.addEventListener("click", closeSidebar);
+
+  function goToPanel(panel) {
+    document.querySelectorAll(".admin-nav-item[data-panel]").forEach(el => {
+      el.classList.toggle("is-active", el.dataset.panel === panel);
+    });
+    document.querySelectorAll(".admin-panel[data-panel-content]").forEach(el => {
+      const active = el.dataset.panelContent === panel;
+      el.hidden = !active;
+      el.classList.toggle("is-active", active);
+    });
+    const meta = panelMeta[panel] || panelMeta.dashboard;
+    panelTitleEl.textContent = meta.title;
+    panelSubtitleEl.textContent = meta.subtitle;
+    closeSidebar();
+  }
+
+  document.querySelectorAll(".admin-nav-item[data-panel]").forEach(el => {
+    el.addEventListener("click", () => goToPanel(el.dataset.panel));
+  });
+  document.querySelectorAll("[data-goto-panel]").forEach(el => {
+    el.addEventListener("click", () => goToPanel(el.dataset.gotoPanel));
+  });
+
   // ---------- auth / view switching ----------
   async function checkSession() {
     try {
@@ -58,16 +186,25 @@
   function showDashboard(username, isOwner) {
     loginView.hidden = true;
     dashboardView.hidden = false;
-    document.getElementById("adminWhoami").textContent = `Login sebagai ${username}${isOwner ? " (owner)" : ""}`;
+    document.getElementById("adminWhoami").innerHTML =
+      `<i class="fa-solid fa-circle-user"></i> ${escapeHtml(username)}${isOwner ? " (owner)" : ""}`;
+
+    goToPanel("dashboard");
     loadGalleryExtra();
     loadSiswaAdmin();
 
-    const adminsSection = document.getElementById("adminsSection");
+    const navAdminItem = document.getElementById("navAdminItem");
+    const shortcutAdmin = document.getElementById("shortcutAdmin");
+    const statAdminCard = document.getElementById("statAdminCard");
     if (isOwner) {
-      adminsSection.hidden = false;
+      navAdminItem.hidden = false;
+      shortcutAdmin.hidden = false;
+      statAdminCard.hidden = false;
       loadAdmins();
     } else {
-      adminsSection.hidden = true;
+      navAdminItem.hidden = true;
+      shortcutAdmin.hidden = true;
+      statAdminCard.hidden = true;
     }
   }
 
@@ -96,20 +233,52 @@
   });
 
   document.getElementById("logoutBtn").addEventListener("click", async () => {
+    const confirmed = await askConfirm({
+      title: "Keluar dari admin?",
+      body: "Anda perlu login kembali untuk mengakses panel admin.",
+      okLabel: "Keluar"
+    });
+    if (!confirmed) return;
     try { await api("/api/admin/logout", { method: "POST" }); } catch { /* ignore */ }
     showLogin();
   });
+
+  // ---------- stats ----------
+  let statsState = { siswa: null, galeri: null, admin: null };
+  function renderStats() {
+    document.getElementById("statSiswa").textContent = statsState.siswa === null ? "—" : statsState.siswa;
+    document.getElementById("statGaleri").textContent = statsState.galeri === null ? "—" : statsState.galeri;
+    document.getElementById("statAdmin").textContent = statsState.admin === null ? "—" : statsState.admin;
+    document.getElementById("siswaCountBadge").textContent =
+      statsState.siswa === null ? "—" : `${statsState.siswa} siswa`;
+  }
 
   // ---------- tambah foto galeri ----------
   const galleryFotoInput = document.getElementById("galleryFoto");
   const galleryPreviewWrap = document.getElementById("galleryPreviewWrap");
   const galleryPreviewImg = document.getElementById("galleryPreviewImg");
+  const galleryUploadPlaceholder = document.getElementById("galleryUploadPlaceholder");
 
-  galleryFotoInput.addEventListener("change", () => {
-    const file = galleryFotoInput.files[0];
-    if (!file) { galleryPreviewWrap.hidden = true; return; }
+  function setGalleryPreview(file) {
+    if (!file) {
+      galleryPreviewWrap.hidden = true;
+      galleryUploadPlaceholder.hidden = false;
+      galleryFotoInput.hidden = false;
+      return;
+    }
     galleryPreviewImg.src = URL.createObjectURL(file);
+    document.getElementById("galleryFileName").textContent = file.name;
+    document.getElementById("galleryFileSize").textContent = formatFileSize(file.size);
     galleryPreviewWrap.hidden = false;
+    galleryUploadPlaceholder.hidden = true;
+    galleryFotoInput.hidden = true;
+  }
+
+  galleryFotoInput.addEventListener("change", () => setGalleryPreview(galleryFotoInput.files[0]));
+
+  document.getElementById("galleryRemoveFile").addEventListener("click", () => {
+    galleryFotoInput.value = "";
+    setGalleryPreview(null);
   });
 
   document.getElementById("galleryForm").addEventListener("submit", async event => {
@@ -132,86 +301,145 @@
         method: "POST",
         body: JSON.stringify({ judul, foto })
       });
-      setStatus(statusEl, "Foto berhasil ditambahkan ke galeri.", "success");
+      showToast("Foto berhasil ditambahkan.", "success");
       event.target.reset();
-      galleryPreviewWrap.hidden = true;
+      setGalleryPreview(null);
       loadGalleryExtra();
     } catch (error) {
-      setStatus(statusEl, error.message, "error");
+      setStatus(statusEl, "Foto gagal diupload. Coba lagi.", "error");
+      showToast(error.message || "Foto gagal diupload.", "error");
     } finally {
       toggleSpinner(button, false);
     }
   });
 
+  function gallerySkeleton() {
+    return Array.from({ length: 4 })
+      .map(() => '<div class="skeleton-block"></div>')
+      .join("");
+  }
+
   async function loadGalleryExtra() {
     const container = document.getElementById("galleryExtraList");
-    container.innerHTML = '<p class="admin-empty">Memuat...</p>';
+    container.innerHTML = `<div class="admin-skeleton-grid">${gallerySkeleton()}</div>`;
     try {
       const all = await api("/api/gallery");
+      statsState.galeri = all.length;
+      renderStats();
+
       const extra = all.filter(item => item.id);
       if (!extra.length) {
-        container.innerHTML = '<p class="admin-empty">Belum ada foto tambahan.</p>';
+        container.innerHTML = '<p class="empty-state">Belum ada foto</p>';
         return;
       }
       container.innerHTML = extra.map(item => `
         <div class="admin-gallery-item" data-id="${item.id}">
-          <img src="${item.foto}" alt="${item.judul || ""}">
-          <span class="admin-gallery-item-title">${item.judul || ""}</span>
-          <button type="button" class="admin-gallery-item-delete" data-delete-id="${item.id}" aria-label="Hapus foto">
-            <i class="fa-solid fa-trash"></i>
-          </button>
+          <div class="admin-gallery-item-photo">
+            <img src="${item.foto}" alt="${escapeHtml(item.judul) || "Foto galeri"}">
+          </div>
+          <div class="admin-gallery-item-foot">
+            <span class="admin-gallery-item-title">${escapeHtml(item.judul) || "Tanpa judul"}</span>
+            <button type="button" class="admin-btn-icon-danger" data-delete-id="${item.id}" aria-label="Hapus foto">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
         </div>`).join("");
     } catch (error) {
-      container.innerHTML = `<p class="admin-empty">${error.message}</p>`;
+      container.innerHTML = `<div class="empty-state is-error"><i class="fa-solid fa-triangle-exclamation"></i>Data gagal dimuat.<br>
+        <button type="button" class="empty-state-retry" data-retry="galeri"><i class="fa-solid fa-rotate-right"></i> Coba Lagi</button></div>`;
     }
   }
 
   document.getElementById("galleryExtraList").addEventListener("click", async event => {
+    const retryBtn = event.target.closest("[data-retry]");
+    if (retryBtn) { loadGalleryExtra(); return; }
+
     const btn = event.target.closest("[data-delete-id]");
     if (!btn) return;
-    if (!confirm("Hapus foto ini dari galeri?")) return;
+    const confirmed = await askConfirm({
+      title: "Hapus foto ini?",
+      body: "Foto yang dihapus tidak dapat dikembalikan.",
+      okLabel: "Hapus"
+    });
+    if (!confirmed) return;
     try {
       await api("/api/admin/gallery", {
         method: "DELETE",
         body: JSON.stringify({ id: btn.dataset.deleteId })
       });
+      showToast("Data berhasil dihapus.", "success");
       loadGalleryExtra();
     } catch (error) {
-      alert(error.message);
+      showToast(error.message || "Foto gagal diupload. Coba lagi.", "error");
     }
   });
 
-  // ---------- ubah foto siswa ----------
+  // ---------- ubah foto & data siswa ----------
   let allSiswa = [];
 
+  function siswaSkeletonRows(count) {
+    return Array.from({ length: count })
+      .map(() => '<tr><td colspan="6"><div class="skeleton-block admin-skeleton-row"></div></td></tr>')
+      .join("");
+  }
+  function siswaSkeletonCards(count) {
+    return Array.from({ length: count })
+      .map(() => '<div class="skeleton-block admin-skeleton-row"></div>')
+      .join("");
+  }
+
   async function loadSiswaAdmin() {
-    const container = document.getElementById("siswaAdminList");
-    container.innerHTML = '<p class="admin-empty">Memuat data siswa...</p>';
+    document.getElementById("siswaTableBody").innerHTML = siswaSkeletonRows(6);
+    document.getElementById("siswaCardList").innerHTML = siswaSkeletonCards(6);
     try {
       allSiswa = await api("/api/siswa");
+      statsState.siswa = allSiswa.length;
+      renderStats();
       renderSiswaAdmin(allSiswa);
     } catch (error) {
-      container.innerHTML = `<p class="admin-empty">${error.message}</p>`;
+      const errorHtml = `<div class="empty-state is-error"><i class="fa-solid fa-triangle-exclamation"></i>Data gagal dimuat.<br>
+        <button type="button" class="empty-state-retry" data-retry="siswa"><i class="fa-solid fa-rotate-right"></i> Coba Lagi</button></div>`;
+      document.getElementById("siswaTableBody").innerHTML = `<tr><td colspan="6">${errorHtml}</td></tr>`;
+      document.getElementById("siswaCardList").innerHTML = errorHtml;
     }
   }
 
   function renderSiswaAdmin(items) {
-    const container = document.getElementById("siswaAdminList");
+    const tableBody = document.getElementById("siswaTableBody");
+    const cardList = document.getElementById("siswaCardList");
+
     if (!items.length) {
-      container.innerHTML = '<p class="admin-empty">Siswa tidak ditemukan.</p>';
+      const empty = '<p class="empty-state">Siswa tidak ditemukan.</p>';
+      tableBody.innerHTML = `<tr><td colspan="6">${empty}</td></tr>`;
+      cardList.innerHTML = empty;
       return;
     }
-    container.innerHTML = items.map(s => `
-      <div class="admin-siswa-item">
-        <img src="${s.foto}" alt="Foto ${s.nama}" onerror="this.src='assets/img/logo/default-avatar.png'">
-        <div class="admin-siswa-item-name">No. ${s.absen} — ${s.nama}</div>
-        <div class="admin-siswa-item-actions">
-          <button type="button" class="admin-btn admin-btn-ghost" data-edit-absen="${s.absen}">
-            <i class="fa-solid fa-camera"></i> Foto
-          </button>
-          <button type="button" class="admin-btn admin-btn-ghost" data-edit-data-absen="${s.absen}">
-            <i class="fa-solid fa-pen"></i> Data
-          </button>
+
+    tableBody.innerHTML = items.map(s => `
+      <tr>
+        <td><img class="admin-table-avatar" src="${s.foto}" alt="Foto ${escapeHtml(s.nama)}" onerror="this.src='assets/img/logo/default-avatar.png'"></td>
+        <td class="admin-table-name">${escapeHtml(s.nama)}</td>
+        <td>${escapeHtml(s.nis) || "—"}</td>
+        <td>${s.jk === "P" ? "Perempuan" : "Laki-laki"}</td>
+        <td>${s.ig ? `<span class="admin-table-muted">@${escapeHtml(s.ig)}</span>` : "—"}</td>
+        <td>
+          <div class="admin-table-actions">
+            <button type="button" class="admin-btn admin-btn-ghost" data-edit-absen="${s.absen}"><i class="fa-solid fa-camera"></i> Foto</button>
+            <button type="button" class="admin-btn admin-btn-ghost" data-edit-data-absen="${s.absen}"><i class="fa-solid fa-pen"></i> Data</button>
+          </div>
+        </td>
+      </tr>`).join("");
+
+    cardList.innerHTML = items.map(s => `
+      <div class="admin-siswa-card">
+        <img src="${s.foto}" alt="Foto ${escapeHtml(s.nama)}" onerror="this.src='assets/img/logo/default-avatar.png'">
+        <div class="admin-siswa-card-info">
+          <div class="admin-siswa-card-name">${escapeHtml(s.nama)}</div>
+          <div class="admin-siswa-card-meta">${escapeHtml(s.nis) || "—"} · ${s.ig ? `@${escapeHtml(s.ig)}` : "—"}</div>
+        </div>
+        <div class="admin-siswa-card-actions">
+          <button type="button" class="admin-btn-icon-danger" style="color:var(--color-charcoal)" data-edit-absen="${s.absen}" aria-label="Ubah foto"><i class="fa-solid fa-camera"></i></button>
+          <button type="button" class="admin-btn-icon-danger" style="color:var(--color-charcoal)" data-edit-data-absen="${s.absen}" aria-label="Ubah data"><i class="fa-solid fa-pen"></i></button>
         </div>
       </div>`).join("");
   }
@@ -221,26 +449,45 @@
     renderSiswaAdmin(allSiswa.filter(s => s.nama.toLowerCase().includes(query)));
   });
 
-  document.getElementById("siswaAdminList").addEventListener("click", event => {
-    const fotoBtn = event.target.closest("[data-edit-absen]");
-    if (fotoBtn) {
-      openSiswaFotoModal(Number(fotoBtn.dataset.editAbsen));
-      return;
-    }
-    const dataBtn = event.target.closest("[data-edit-data-absen]");
-    if (dataBtn) {
-      openSiswaDataModal(Number(dataBtn.dataset.editDataAbsen));
-    }
-  });
+  function bindSiswaActions(container) {
+    container.addEventListener("click", event => {
+      const retryBtn = event.target.closest("[data-retry]");
+      if (retryBtn) { loadSiswaAdmin(); return; }
 
-  // ---------- modal ubah data siswa (nama, NIS, JK, Instagram) ----------
+      const fotoBtn = event.target.closest("[data-edit-absen]");
+      if (fotoBtn) {
+        openSiswaFotoModal(Number(fotoBtn.dataset.editAbsen));
+        return;
+      }
+      const dataBtn = event.target.closest("[data-edit-data-absen]");
+      if (dataBtn) {
+        openSiswaDataModal(Number(dataBtn.dataset.editDataAbsen));
+      }
+    });
+  }
+  bindSiswaActions(document.getElementById("siswaTableBody"));
+  bindSiswaActions(document.getElementById("siswaCardList"));
+
+  // ---------- modal close (shared) ----------
+  function bindModalClose(modal, onClose) {
+    modal.querySelectorAll("[data-close-modal]").forEach(el => {
+      el.addEventListener("click", () => {
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden", "true");
+        if (onClose) onClose();
+      });
+    });
+  }
+
+  // ---------- modal ubah data siswa ----------
   const siswaDataModal = document.getElementById("siswaDataModal");
+  bindModalClose(siswaDataModal);
 
   function openSiswaDataModal(absen) {
     const student = allSiswa.find(s => s.absen === absen);
     if (!student) return;
     document.getElementById("siswaDataAbsen").value = absen;
-    document.getElementById("siswaDataModalTitle").textContent = `Ubah Data — No. ${absen}`;
+    document.getElementById("siswaDataModalTitle").textContent = `Ubah Data — ${student.nama}`;
     document.getElementById("siswaDataNama").value = student.nama || "";
     document.getElementById("siswaDataNis").value = student.nis || "";
     document.getElementById("siswaDataJk").value = student.jk === "P" ? "P" : "L";
@@ -254,10 +501,6 @@
     siswaDataModal.classList.remove("is-open");
     siswaDataModal.setAttribute("aria-hidden", "true");
   }
-
-  siswaDataModal.querySelectorAll("[data-close-modal]").forEach(el => {
-    el.addEventListener("click", closeSiswaDataModal);
-  });
 
   document.getElementById("siswaDataForm").addEventListener("submit", async event => {
     event.preventDefault();
@@ -282,9 +525,9 @@
         method: "POST",
         body: JSON.stringify({ absen, nama, nis, jk, ig })
       });
-      setStatus(statusEl, "Data siswa berhasil diperbarui.", "success");
+      showToast("Data siswa berhasil disimpan.", "success");
       await loadSiswaAdmin();
-      setTimeout(closeSiswaDataModal, 700);
+      closeSiswaDataModal();
     } catch (error) {
       setStatus(statusEl, error.message, "error");
     } finally {
@@ -297,14 +540,32 @@
   const siswaFotoInput = document.getElementById("siswaFotoInput");
   const siswaFotoPreviewWrap = document.getElementById("siswaFotoPreviewWrap");
   const siswaFotoPreviewImg = document.getElementById("siswaFotoPreviewImg");
+  const siswaFotoUploadPlaceholder = document.getElementById("siswaFotoUploadPlaceholder");
+  bindModalClose(siswaFotoModal);
+
+  function setSiswaFotoPreview(file) {
+    if (!file) {
+      siswaFotoPreviewWrap.hidden = true;
+      siswaFotoUploadPlaceholder.hidden = false;
+      siswaFotoInput.hidden = false;
+      return;
+    }
+    siswaFotoPreviewImg.src = URL.createObjectURL(file);
+    document.getElementById("siswaFotoFileName").textContent = file.name;
+    document.getElementById("siswaFotoFileSize").textContent = formatFileSize(file.size);
+    siswaFotoPreviewWrap.hidden = false;
+    siswaFotoUploadPlaceholder.hidden = true;
+    siswaFotoInput.hidden = true;
+  }
 
   function openSiswaFotoModal(absen) {
     const student = allSiswa.find(s => s.absen === absen);
     if (!student) return;
     document.getElementById("siswaFotoAbsen").value = absen;
     document.getElementById("siswaFotoModalTitle").textContent = `Ubah Foto — ${student.nama}`;
+    document.getElementById("siswaFotoCurrentImg").src = student.foto;
     document.getElementById("siswaFotoForm").reset();
-    siswaFotoPreviewWrap.hidden = true;
+    setSiswaFotoPreview(null);
     setStatus(document.getElementById("siswaFotoStatus"), "", null);
     siswaFotoModal.classList.add("is-open");
     siswaFotoModal.setAttribute("aria-hidden", "false");
@@ -315,15 +576,10 @@
     siswaFotoModal.setAttribute("aria-hidden", "true");
   }
 
-  siswaFotoModal.querySelectorAll("[data-close-modal]").forEach(el => {
-    el.addEventListener("click", closeSiswaFotoModal);
-  });
-
-  siswaFotoInput.addEventListener("change", () => {
-    const file = siswaFotoInput.files[0];
-    if (!file) { siswaFotoPreviewWrap.hidden = true; return; }
-    siswaFotoPreviewImg.src = URL.createObjectURL(file);
-    siswaFotoPreviewWrap.hidden = false;
+  siswaFotoInput.addEventListener("change", () => setSiswaFotoPreview(siswaFotoInput.files[0]));
+  document.getElementById("siswaFotoRemoveFile").addEventListener("click", () => {
+    siswaFotoInput.value = "";
+    setSiswaFotoPreview(null);
   });
 
   document.getElementById("siswaFotoForm").addEventListener("submit", async event => {
@@ -346,9 +602,9 @@
         method: "POST",
         body: JSON.stringify({ absen, foto })
       });
-      setStatus(statusEl, "Foto siswa berhasil diperbarui.", "success");
+      showToast("Foto berhasil diperbarui.", "success");
       await loadSiswaAdmin();
-      setTimeout(closeSiswaFotoModal, 700);
+      closeSiswaFotoModal();
     } catch (error) {
       setStatus(statusEl, error.message, "error");
     } finally {
@@ -356,51 +612,84 @@
     }
   });
 
-  // ---------- kelola akun admin (khusus owner: azriel & david) ----------
+  // ---------- kelola akun admin (khusus owner) ----------
+  const createAdminModal = document.getElementById("createAdminModal");
+  bindModalClose(createAdminModal);
+
+  document.getElementById("openCreateAdminBtn").addEventListener("click", () => {
+    document.getElementById("createAdminForm").reset();
+    setStatus(document.getElementById("createAdminStatus"), "", null);
+    createAdminModal.classList.add("is-open");
+    createAdminModal.setAttribute("aria-hidden", "false");
+  });
+
+  function closeCreateAdminModal() {
+    createAdminModal.classList.remove("is-open");
+    createAdminModal.setAttribute("aria-hidden", "true");
+  }
+
+  function adminSkeletonRows(count) {
+    return Array.from({ length: count })
+      .map(() => '<tr><td colspan="3"><div class="skeleton-block admin-skeleton-row"></div></td></tr>')
+      .join("");
+  }
+
   async function loadAdmins() {
-    const container = document.getElementById("adminsList");
-    container.innerHTML = '<p class="admin-empty">Memuat daftar admin...</p>';
+    const tableBody = document.getElementById("adminsTableBody");
+    tableBody.innerHTML = adminSkeletonRows(3);
     try {
       const admins = await api("/api/admin/admins");
+      statsState.admin = admins.length;
+      renderStats();
       renderAdmins(admins);
     } catch (error) {
-      container.innerHTML = `<p class="admin-empty">${error.message}</p>`;
+      tableBody.innerHTML = `<tr><td colspan="3">
+        <div class="empty-state is-error"><i class="fa-solid fa-triangle-exclamation"></i>Data gagal dimuat.<br>
+          <button type="button" class="empty-state-retry" data-retry="admin"><i class="fa-solid fa-rotate-right"></i> Coba Lagi</button></div>
+      </td></tr>`;
     }
   }
 
   function renderAdmins(admins) {
-    const container = document.getElementById("adminsList");
+    const tableBody = document.getElementById("adminsTableBody");
     if (!admins.length) {
-      container.innerHTML = '<p class="admin-empty">Belum ada akun admin.</p>';
+      tableBody.innerHTML = '<tr><td colspan="3"><p class="empty-state">Belum ada data admin</p></td></tr>';
       return;
     }
-    container.innerHTML = admins.map(a => `
-      <div class="admin-list-item">
-        <div class="admin-list-item-info">
-          <span class="admin-list-item-name">${a.username}</span>
-          <span class="admin-badge ${a.isOwner ? "admin-badge-owner" : ""}">${a.isOwner ? "Owner" : "Admin"}</span>
-        </div>
-        ${a.removable
-          ? `<button type="button" class="admin-btn admin-btn-ghost admin-btn-danger" data-delete-admin="${a.username}">
-               <i class="fa-solid fa-trash"></i> Hapus
-             </button>`
-          : ""}
-      </div>`).join("");
+    tableBody.innerHTML = admins.map(a => `
+      <tr>
+        <td class="admin-table-name">${escapeHtml(a.username)}</td>
+        <td><span class="admin-badge ${a.isOwner ? "admin-badge-owner" : ""}">${a.isOwner ? "Owner" : "Admin"}</span></td>
+        <td>
+          ${a.removable
+            ? `<button type="button" class="admin-btn admin-btn-ghost" data-delete-admin="${escapeHtml(a.username)}"><i class="fa-solid fa-trash"></i> Hapus</button>`
+            : '<span class="admin-table-muted">—</span>'}
+        </td>
+      </tr>`).join("");
   }
 
-  document.getElementById("adminsList").addEventListener("click", async event => {
+  document.getElementById("adminsTableBody").addEventListener("click", async event => {
+    const retryBtn = event.target.closest("[data-retry]");
+    if (retryBtn) { loadAdmins(); return; }
+
     const btn = event.target.closest("[data-delete-admin]");
     if (!btn) return;
     const username = btn.dataset.deleteAdmin;
-    if (!confirm(`Hapus akun admin "${username}"?`)) return;
+    const confirmed = await askConfirm({
+      title: `Hapus akun admin "${username}"?`,
+      body: "Akun ini tidak akan bisa login lagi setelah dihapus.",
+      okLabel: "Hapus"
+    });
+    if (!confirmed) return;
     try {
       await api("/api/admin/admins", {
         method: "DELETE",
         body: JSON.stringify({ username })
       });
+      showToast("Data berhasil dihapus.", "success");
       loadAdmins();
     } catch (error) {
-      alert(error.message);
+      showToast(error.message || "Terjadi kesalahan.", "error");
     }
   });
 
@@ -413,15 +702,25 @@
     const username = document.getElementById("newAdminUsername").value.trim();
     const password = document.getElementById("newAdminPassword").value;
 
+    if (!username) {
+      setStatus(statusEl, "Username wajib diisi.", "error");
+      return;
+    }
+    if (!password) {
+      setStatus(statusEl, "Password wajib diisi.", "error");
+      return;
+    }
+
     toggleSpinner(button, true);
     try {
       await api("/api/admin/admins", {
         method: "POST",
         body: JSON.stringify({ username, password })
       });
-      setStatus(statusEl, `Akun admin "${username}" berhasil dibuat.`, "success");
+      showToast(`Admin berhasil dibuat.`, "success");
       event.target.reset();
       loadAdmins();
+      closeCreateAdminModal();
     } catch (error) {
       setStatus(statusEl, error.message, "error");
     } finally {
