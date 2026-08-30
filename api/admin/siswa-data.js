@@ -9,6 +9,7 @@
 const baseSiswa = require("../../data/siswa.json");
 const { getLoggedInAdmin } = require("../../lib/auth");
 const { readJson, writeJson } = require("../../lib/blobData");
+const { logActivity } = require("../../lib/activityLog");
 
 const DATA_OVERRIDES_KEY = "siswa-data-overrides.json";
 
@@ -57,6 +58,8 @@ module.exports = async function handler(req, res) {
         updatedAt: new Date().toISOString()
     };
     await writeJson(DATA_OVERRIDES_KEY, overrides);
+
+    await logActivity("siswa_edit", admin, `Ubah data siswa absen ${absen} (${nama}).`);
 
     return res.status(200).json({ ok: true, absen, nama, nis, jk, ig });
 };

@@ -8,6 +8,7 @@ const crypto = require("crypto");
 const { getLoggedInAdmin, isOwnerUsername } = require("../../lib/auth");
 const { readJson, writeJson, uploadImage, deleteImage } = require("../../lib/blobData");
 const { decodeImagePayload, safeFileNamePart } = require("../../lib/http");
+const { logActivity } = require("../../lib/activityLog");
 
 module.exports = async function handler(req, res) {
     const admin = getLoggedInAdmin(req);
@@ -48,6 +49,8 @@ module.exports = async function handler(req, res) {
         extra.push(entry);
         await writeJson("gallery-extra.json", extra);
 
+        await logActivity("gallery_upload", admin, `Upload foto galeri: "${judul}".`);
+
         return res.status(200).json({ ok: true, item: entry });
     }
 
@@ -75,6 +78,8 @@ module.exports = async function handler(req, res) {
         const remaining = extra.filter(item => item.id !== id);
         await writeJson("gallery-extra.json", remaining);
         await deleteImage(target.foto);
+
+        await logActivity("gallery_delete", admin, `Hapus foto galeri: "${target.judul || id}".`);
 
         return res.status(200).json({ ok: true });
     }

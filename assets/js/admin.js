@@ -128,7 +128,8 @@
     dashboard: { title: "Dashboard", subtitle: "Kelola konten website XI TKJ 1." },
     galeri: { title: "Galeri", subtitle: "Tambahkan dan kelola foto galeri kelas." },
     siswa: { title: "Siswa", subtitle: "Cari dan ubah data atau pasfoto siswa." },
-    admin: { title: "Manajemen Admin", subtitle: "Kelola akun yang memiliki akses ke panel admin." }
+    admin: { title: "Manajemen Admin", subtitle: "Kelola akun yang memiliki akses ke panel admin." },
+    log: { title: "Log Aktivitas", subtitle: "Riwayat kegiatan di panel admin (khusus owner)." }
   };
 
   function openSidebar() {
@@ -199,15 +200,22 @@
     const navAdminItem = document.getElementById("navAdminItem");
     const shortcutAdmin = document.getElementById("shortcutAdmin");
     const statAdminCard = document.getElementById("statAdminCard");
+    const navLogItem = document.getElementById("navLogItem");
+    const shortcutLog = document.getElementById("shortcutLog");
     if (isOwner) {
       navAdminItem.hidden = false;
       shortcutAdmin.hidden = false;
       statAdminCard.hidden = false;
+      navLogItem.hidden = false;
+      shortcutLog.hidden = false;
       loadAdmins();
+      loadActivityLog();
     } else {
       navAdminItem.hidden = true;
       shortcutAdmin.hidden = true;
       statAdminCard.hidden = true;
+      navLogItem.hidden = true;
+      shortcutLog.hidden = true;
     }
   }
 
@@ -734,6 +742,73 @@
       toggleSpinner(button, false);
     }
   });
+
+  // ---------- log aktivitas (khusus owner) ----------
+  const ACTIVITY_LABELS = {
+    login: "Login",
+    login_gagal: "Login gagal",
+    logout: "Logout",
+    gallery_upload: "Upload foto galeri",
+    gallery_delete: "Hapus foto galeri",
+    siswa_edit: "Ubah data siswa",
+    siswa_foto_edit: "Ubah foto siswa",
+    admin_create: "Buat akun admin",
+    admin_delete: "Hapus akun admin"
+  };
+
+  function activityLogSkeletonRows(count) {
+    return Array.from({ length: count })
+      .map(() => '<tr><td colspan="4"><div class="skeleton-block admin-skeleton-row"></div></td></tr>')
+      .join("");
+  }
+
+  function formatLogTime(iso) {
+    try {
+      return new Date(iso).toLocaleString("id-ID", {
+        dateStyle: "medium",
+        timeStyle: "short"
+      });
+    } catch {
+      return iso;
+    }
+  }
+
+  async function loadActivityLog() {
+    const tableBody = document.getElementById("activityLogTableBody");
+    if (!tableBody) return;
+    tableBody.innerHTML = activityLogSkeletonRows(5);
+    try {
+      const log = await api("/api/admin/activity-log");
+      renderActivityLog(log);
+    } catch (error) {
+      tableBody.innerHTML = `<tr><td colspan="4">
+        <div class="empty-state is-error"><i class="fa-solid fa-triangle-exclamation"></i>Data gagal dimuat.<br>
+          <button type="button" class="empty-state-retry" data-retry="log"><i class="fa-solid fa-rotate-right"></i> Coba Lagi</button></div>
+      </td></tr>`;
+    }
+  }
+
+  function renderActivityLog(log) {
+    const tableBody = document.getElementById("activityLogTableBody");
+    if (!log.length) {
+      tableBody.innerHTML = '<tr><td colspan="4"><p class="empty-state">Belum ada aktivitas tercatat</p></td></tr>';
+      return;
+    }
+    tableBody.innerHTML = log.map(entry => `
+      <tr>
+        <td class="admin-table-muted">${escapeHtml(formatLogTime(entry.at))}</td>
+        <td class="admin-table-name">${escapeHtml(entry.actor)}</td>
+        <td>${escapeHtml(ACTIVITY_LABELS[entry.action] || entry.action)}</td>
+        <td class="admin-table-muted">${escapeHtml(entry.detail || "—")}</td>
+      </tr>`).join("");
+  }
+
+  document.getElementById("activityLogTableBody").addEventListener("click", event => {
+    const retryBtn = event.target.closest("[data-retry]");
+    if (retryBtn) loadActivityLog();
+  });
+
+  document.getElementById("refreshLogBtn").addEventListener("click", () => loadActivityLog());
 
   checkSession();
 })();

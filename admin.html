@@ -87,6 +87,9 @@
         <button type="button" class="admin-nav-item" data-panel="admin" id="navAdminItem" hidden>
           <i class="fa-solid fa-user-shield"></i> <span>Admin</span>
         </button>
+        <button type="button" class="admin-nav-item" data-panel="log" id="navLogItem" hidden>
+          <i class="fa-solid fa-clock-rotate-left"></i> <span>Log Aktivitas</span>
+        </button>
       </nav>
 
       <div class="admin-nav-bottom">
@@ -149,6 +152,10 @@
               <button type="button" class="admin-shortcut" data-goto-panel="admin" id="shortcutAdmin" hidden>
                 <i class="fa-solid fa-user-shield"></i>
                 <span>Manajemen Admin</span>
+              </button>
+              <button type="button" class="admin-shortcut" data-goto-panel="log" id="shortcutLog" hidden>
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span>Log Aktivitas</span>
               </button>
             </div>
           </div>
@@ -269,6 +276,35 @@
                   </tr>
                 </thead>
                 <tbody id="adminsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================== PANEL: LOG AKTIVITAS ===================== -->
+        <section class="admin-panel" data-panel-content="log" hidden>
+          <div class="admin-card">
+            <div class="admin-card-header admin-card-header-row">
+              <div>
+                <h2>Log Aktivitas</h2>
+                <p class="admin-card-sub">Riwayat kegiatan di panel admin (login, logout, upload, ubah data). Hanya owner yang bisa melihat ini.</p>
+              </div>
+              <button type="button" class="admin-btn admin-btn-secondary" id="refreshLogBtn">
+                <i class="fa-solid fa-rotate-right"></i> Muat Ulang
+              </button>
+            </div>
+
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Waktu</th>
+                    <th>Akun</th>
+                    <th>Aktivitas</th>
+                    <th>Detail</th>
+                  </tr>
+                </thead>
+                <tbody id="activityLogTableBody"></tbody>
               </table>
             </div>
           </div>

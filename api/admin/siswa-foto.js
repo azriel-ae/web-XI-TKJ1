@@ -8,6 +8,7 @@ const baseSiswa = require("../../data/siswa.json");
 const { getLoggedInAdmin } = require("../../lib/auth");
 const { readJson, writeJson, uploadImage } = require("../../lib/blobData");
 const { decodeImagePayload, safeFileNamePart } = require("../../lib/http");
+const { logActivity } = require("../../lib/activityLog");
 
 module.exports = async function handler(req, res) {
     if (req.method !== "POST") {
@@ -48,6 +49,8 @@ module.exports = async function handler(req, res) {
     const overrides = await readJson("siswa-foto-overrides.json", {});
     overrides[absen] = fotoUrl;
     await writeJson("siswa-foto-overrides.json", overrides);
+
+    await logActivity("siswa_foto_edit", admin, `Ubah foto siswa absen ${absen} (${student.nama}).`);
 
     return res.status(200).json({ ok: true, absen, foto: fotoUrl, nama: student.nama });
 };

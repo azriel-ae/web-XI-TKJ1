@@ -5,6 +5,7 @@
 // =========================
 
 const { verifyCredentials, createSessionToken, buildSessionCookie, isOwnerUsername } = require("../../lib/auth");
+const { logActivity } = require("../../lib/activityLog");
 
 module.exports = async function handler(req, res) {
     if (req.method !== "POST") {
@@ -20,11 +21,14 @@ module.exports = async function handler(req, res) {
     const validUsername = await verifyCredentials(username, password);
 
     if (!validUsername) {
+        await logActivity("login_gagal", String(username || "").trim() || "unknown", "Percobaan login gagal.");
         return res.status(401).json({ error: "Username atau password salah." });
     }
 
     const token = createSessionToken(validUsername);
     res.setHeader("Set-Cookie", buildSessionCookie(token, req));
+
+    await logActivity("login", validUsername, "Berhasil login ke panel admin.");
 
     return res.status(200).json({ ok: true, username: validUsername, isOwner: isOwnerUsername(validUsername) });
 };

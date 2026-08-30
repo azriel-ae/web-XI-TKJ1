@@ -12,6 +12,7 @@ const {
     createAdminAccount,
     deleteAdminAccount
 } = require("../../lib/auth");
+const { logActivity } = require("../../lib/activityLog");
 
 module.exports = async function handler(req, res) {
     const admin = getLoggedInAdmin(req);
@@ -32,6 +33,7 @@ module.exports = async function handler(req, res) {
         const body = req.body || {};
         try {
             const created = await createAdminAccount(body.username, body.password, admin);
+            await logActivity("admin_create", admin, `Membuat akun admin baru: "${created.username}".`);
             return res.status(200).json({ ok: true, username: created.username });
         } catch (error) {
             return res.status(400).json({ error: error.message });
@@ -45,6 +47,7 @@ module.exports = async function handler(req, res) {
         }
         try {
             await deleteAdminAccount(body.username);
+            await logActivity("admin_delete", admin, `Menghapus akun admin: "${body.username}".`);
             return res.status(200).json({ ok: true });
         } catch (error) {
             return res.status(400).json({ error: error.message });
