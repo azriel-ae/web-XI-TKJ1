@@ -5,7 +5,7 @@
 // =========================
 
 const crypto = require("crypto");
-const { getLoggedInAdmin } = require("../../lib/auth");
+const { getLoggedInAdmin, isOwnerUsername } = require("../../lib/auth");
 const { readJson, writeJson, uploadImage, deleteImage } = require("../../lib/blobData");
 const { decodeImagePayload, safeFileNamePart } = require("../../lib/http");
 
@@ -52,6 +52,14 @@ module.exports = async function handler(req, res) {
     }
 
     if (req.method === "DELETE") {
+        // Hanya owner (azriel & david) yang boleh menghapus foto galeri.
+        // Jangan pernah percaya role/permission yang dikirim dari frontend —
+        // selalu cek ulang di sini terhadap identitas yang berasal dari
+        // session cookie yang sudah diverifikasi (getLoggedInAdmin di atas).
+        if (!isOwnerUsername(admin)) {
+            return res.status(403).json({ error: "Anda tidak memiliki izin untuk menghapus foto." });
+        }
+
         const body = req.body || {};
         const id = body.id;
         if (!id) {

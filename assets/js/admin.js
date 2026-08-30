@@ -183,9 +183,12 @@
     dashboardView.hidden = true;
   }
 
+  let currentIsOwner = false;
+
   function showDashboard(username, isOwner) {
     loginView.hidden = true;
     dashboardView.hidden = false;
+    currentIsOwner = !!isOwner;
     document.getElementById("adminWhoami").innerHTML =
       `<i class="fa-solid fa-circle-user"></i> ${escapeHtml(username)}${isOwner ? " (owner)" : ""}`;
 
@@ -338,10 +341,14 @@
             <img src="${item.foto}" alt="${escapeHtml(item.judul) || "Foto galeri"}">
           </div>
           <div class="admin-gallery-item-foot">
-            <span class="admin-gallery-item-title">${escapeHtml(item.judul) || "Tanpa judul"}</span>
+            <div class="admin-gallery-item-info">
+              <span class="admin-gallery-item-title">${escapeHtml(item.judul) || "Tanpa judul"}</span>
+              ${item.uploadedBy ? `<span class="admin-gallery-item-uploader">${escapeHtml(item.uploadedBy)}</span>` : ""}
+            </div>
+            ${currentIsOwner ? `
             <button type="button" class="admin-btn-icon-danger" data-delete-id="${item.id}" aria-label="Hapus foto">
               <i class="fa-solid fa-trash"></i>
-            </button>
+            </button>` : ""}
           </div>
         </div>`).join("");
     } catch (error) {

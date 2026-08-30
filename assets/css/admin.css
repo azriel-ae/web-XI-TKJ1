@@ -639,10 +639,25 @@
   gap: 6px;
   padding: 8px 10px;
 }
+.admin-gallery-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+  min-width: 0;
+}
 .admin-gallery-item-title {
   font-size: 0.78rem;
   font-weight: 600;
   color: var(--color-charcoal);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admin-gallery-item-uploader {
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--color-gray, #8a8a8a);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
