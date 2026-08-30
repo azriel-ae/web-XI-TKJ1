@@ -77,11 +77,12 @@
   const confirmModalOk = document.getElementById("confirmModalOk");
   const confirmModalCancel = document.getElementById("confirmModalCancel");
 
-  function askConfirm({ title, body, okLabel }) {
+  function askConfirm({ title, body, okLabel, cancelLabel }) {
     return new Promise(resolve => {
       confirmModalTitle.textContent = title;
       confirmModalBody.textContent = body;
       confirmModalOk.textContent = okLabel || "Hapus";
+      confirmModalCancel.textContent = cancelLabel || "Batal";
 
       function cleanup(result) {
         confirmModal.classList.remove("is-open");
@@ -116,6 +117,24 @@
   }
   wirePasswordToggle("loginPassword", "loginPasswordToggle");
   wirePasswordToggle("newAdminPassword", "newAdminPasswordToggle");
+
+  // ---------- konfirmasi sebelum kembali ke website ----------
+  function wireBackToSiteConfirm(linkId) {
+    const link = document.getElementById(linkId);
+    if (!link) return;
+    link.addEventListener("click", async event => {
+      event.preventDefault();
+      const confirmed = await askConfirm({
+        title: "Apakah kamu yakin ingin kembali ke website?",
+        body: "Kamu akan meninggalkan panel admin.",
+        okLabel: "Ya, yakin",
+        cancelLabel: "Tidak"
+      });
+      if (confirmed) window.location.href = link.getAttribute("href");
+    });
+  }
+  wireBackToSiteConfirm("backToSiteFromLogin");
+  wireBackToSiteConfirm("backToSiteFromDashboard");
 
   // ---------- sidebar navigation ----------
   const sidebar = document.getElementById("adminSidebar");
