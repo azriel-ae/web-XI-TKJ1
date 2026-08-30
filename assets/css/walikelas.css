@@ -50,31 +50,13 @@
   object-fit: cover;
   object-position: top center;
   display: block;
-  filter: grayscale(1) contrast(1.05);
   transform: scale(1);
-  transition: filter var(--transition-slow), transform var(--transition-slow);
+  transition: transform var(--transition-slow);
 }
 
 .walikelas-photo-frame:hover .walikelas-photo,
 .walikelas-photo-frame:focus-within .walikelas-photo {
-  filter: grayscale(0);
   transform: scale(1.03);
-}
-
-.walikelas-marker {
-  position: absolute;
-  z-index: 2;
-  top: 14px;
-  left: 14px;
-  padding: 4px 9px;
-  border-radius: 6px;
-  border: 1px solid rgba(163, 230, 53, .35);
-  background: rgba(23, 23, 23, .7);
-  backdrop-filter: blur(3px);
-  color: var(--color-lime);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: .7rem;
-  letter-spacing: .03em;
 }
 
 /* ---------- Kolom informasi ---------- */
@@ -94,7 +76,7 @@
 }
 
 .walikelas-jabatan {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 10px;
   margin: 0;
@@ -112,26 +94,30 @@
 }
 
 .walikelas-ig {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 8px;
   width: fit-content;
   margin-top: 20px;
-  padding-bottom: 2px;
-  border-bottom: 1px solid transparent;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(163, 230, 53, .08);
+  border: 1px solid rgba(163, 230, 53, .25);
   color: var(--color-muted-gray);
-  font-size: .92rem;
-  font-weight: 600;
+  font-size: .88rem;
+  font-weight: 500;
   text-decoration: none;
-  transition: color var(--transition), border-color var(--transition);
+  transition: background var(--transition), border-color var(--transition), color var(--transition);
 }
 
-.walikelas-ig i { color: var(--color-lime); font-size: 1rem; }
+.walikelas-ig i { color: var(--color-lime); font-size: .95rem; }
+.walikelas-ig strong { color: #fff; font-weight: 700; }
 
 .walikelas-ig:hover,
 .walikelas-ig:focus-visible {
-  color: #fff;
+  background: rgba(163, 230, 53, .16);
   border-color: var(--color-lime);
+  color: #fff;
 }
 
 .walikelas-quote {

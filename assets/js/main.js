@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initStudents();
   initGallery();
   initFeedback();
+  initSocial();
 
   initChatbot();
 });

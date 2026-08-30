@@ -1,29 +1,87 @@
-.contact-card { display: flex; flex-direction: column; overflow: hidden; padding: 0; color: inherit; text-decoration: none; }
+/* ==========================================================
+   KONTAK KELAS — kartu Instagram & TikTok dengan avatar dinamis.
+   Avatar diambil lewat /api/social (API resmi + cache di server).
+   Kalau tidak tersedia, elemen .social-avatar-fallback (inisial
+   IG/TT) tampil sebagai bagian dari design system — bukan error.
+   ========================================================== */
 
-/* Area screenshot — ganti file di assets/img/kontak/ dengan cuplikan profil Anda sendiri */
-.contact-shot { position: relative; aspect-ratio: 16 / 10; background: var(--gradient-soft); overflow: hidden; }
-.contact-shot img { position: relative; z-index: 2; width: 100%; height: 100%; object-fit: cover; display: block; }
-.contact-shot-fallback {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
+.contact-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
   text-align: center;
-  padding: 16px;
-  color: var(--color-primary);
-  background: linear-gradient(160deg, var(--color-primary-soft), var(--color-primary-soft-2));
+  gap: 16px;
+  padding: 30px 24px 26px;
 }
-.contact-shot-fallback i { font-size: 2rem; }
-.contact-shot-fallback span { color: var(--color-text-muted); font-size: .76rem; line-height: 1.6; }
-.contact-shot-fallback code { color: var(--color-primary-dark); font-size: .72rem; }
 
-.contact-card-body { display: flex; align-items: center; gap: 16px; padding: 22px 24px; }
-.contact-card-body h3 { margin: 0 0 4px; font-size: 1rem; color: var(--color-primary-dark); }
-.contact-card-body p { margin: 0; color: var(--color-text-muted); font-size: .86rem; }
-.contact-arrow { margin-left: auto; color: var(--color-text-muted); transition: color var(--transition), transform var(--transition); }
-.contact-card:hover .contact-arrow { color: var(--color-primary); transform: translate(2px, -2px); }
-.contact-card:hover .icon-box { background: var(--color-lime); color: var(--color-charcoal); }
+.contact-card-head { display: flex; align-items: center; gap: 12px; }
+.contact-card-head h3 { margin: 0; font-size: 1rem; color: var(--color-primary-dark); }
+
+/* ---------- Avatar (dinamis / fallback) ---------- */
+
+.social-avatar {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  flex: none;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--color-primary-soft);
+  border: 2px solid var(--color-border);
+}
+
+.social-avatar-img {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.social-avatar-skeleton {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-color: var(--color-light-gray);
+  background-image: linear-gradient(90deg, rgba(0, 0, 0, .04) 25%, rgba(0, 0, 0, .1) 37%, rgba(0, 0, 0, .04) 63%);
+  background-size: 400% 100%;
+  animation: socialAvatarShimmer 1.4s ease infinite;
+}
+
+.social-avatar-fallback {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-weight: 700;
+  font-size: .92rem;
+  letter-spacing: .04em;
+  color: var(--color-lime);
+  background: var(--color-charcoal);
+}
+
+/* Begitu avatar asli berhasil dimuat, skeleton disembunyikan. */
+.social-avatar.is-loaded .social-avatar-skeleton { display: none; }
+
+/* Kalau API/avatar tidak tersedia, tampilkan inisial dan sembunyikan skeleton. */
+.social-avatar.is-fallback .social-avatar-skeleton { display: none; }
+.social-avatar.is-fallback .social-avatar-fallback { display: flex; }
+
+@keyframes socialAvatarShimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .social-avatar-skeleton { animation: none; }
+}
+
+/* ---------- Handle & tombol kunjungi ---------- */
+
+.contact-handle { margin: 0; color: var(--color-text-muted); font-size: .92rem; font-weight: 600; }
+.contact-visit { width: 100%; margin-top: 4px; }

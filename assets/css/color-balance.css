@@ -50,15 +50,9 @@
 
 .section-darksurface .contact-card { background: var(--color-charcoal); border-color: rgba(255, 255, 255, .08); }
 .section-darksurface .contact-card:hover { border-color: var(--color-lime); }
-.section-darksurface .contact-card-body h3 { color: #fff; }
-.section-darksurface .contact-card-body p { color: var(--color-muted-gray); }
-.section-darksurface .contact-arrow { color: var(--color-muted-gray); }
-.section-darksurface .contact-card:hover .contact-arrow { color: var(--color-lime); }
-.section-darksurface .contact-shot-fallback {
-  background: var(--color-charcoal);
-  color: var(--color-muted-gray);
-}
-.section-darksurface .contact-shot-fallback code { color: var(--color-lime); }
+.section-darksurface .contact-card-head h3 { color: #fff; }
+.section-darksurface .contact-handle { color: var(--color-muted-gray); }
+.section-darksurface .social-avatar { background: var(--color-surface-dark); border-color: rgba(255, 255, 255, .1); }
 .section-darksurface .icon-box { background: rgba(163, 230, 53, .12); color: var(--color-lime); }
 
 /* --- Hero divider should blend into the section right below it --- */

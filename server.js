@@ -23,6 +23,7 @@ const adminSiswaDataHandler = require("./api/admin/siswa-data");
 const adminAdminsHandler = require("./api/admin/admins");
 const galleryHandler = require("./api/gallery");
 const siswaHandler = require("./api/siswa");
+const socialHandler = require("./api/social");
 
 const MIME = {
     ".html": "text/html; charset=utf-8",
@@ -187,7 +188,8 @@ const server = http.createServer((req, res) => {
         "/api/admin/siswa-data": adminSiswaDataHandler,
         "/api/admin/admins": adminAdminsHandler,
         "/api/gallery": galleryHandler,
-        "/api/siswa": siswaHandler
+        "/api/siswa": siswaHandler,
+        "/api/social": socialHandler
     };
 
     if (apiRoutes[url.pathname]) {

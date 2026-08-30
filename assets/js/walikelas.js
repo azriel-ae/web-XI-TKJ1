@@ -78,7 +78,7 @@ function buildWalikelasCard(data) {
 
   const igRow = ig
     ? `<a class="walikelas-ig" href="https://instagram.com/${igHandle}" target="_blank" rel="noopener">
-        <i class="fa-brands fa-instagram"></i> @${igHandle}
+        <i class="fa-brands fa-instagram"></i> Instagram: <strong>@${igHandle}</strong>
        </a>`
     : "";
 
@@ -97,7 +97,6 @@ function buildWalikelasCard(data) {
             loading="lazy"
             onerror="this.onerror=null;this.src='${DEFAULT_FOTO}';"
           />
-          <span class="walikelas-marker" aria-hidden="true">WK · 01</span>
         </div>
       </div>
       <div class="walikelas-info">
