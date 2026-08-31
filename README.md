@@ -38,10 +38,21 @@ Setelah login, admin bisa:
 Filesystem Vercel bersifat *read-only* saat runtime, jadi foto yang diupload admin **tidak akan tersimpan** tanpa **Vercel Blob Storage**:
 
 1. Buka project ini di Vercel Dashboard → tab **Storage** → **Create Database** → pilih **Blob** → hubungkan ke project.
-2. Vercel otomatis mengisi environment variable `BLOB_READ_WRITE_TOKEN` — tidak perlu copy manual.
+2. Vercel otomatis mengisi environment variable token-nya — tidak perlu copy manual.
 3. Redeploy project.
 
 Tanpa langkah ini, panel admin tetap bisa login, tapi upload foto akan gagal tersimpan permanen di Vercel.
+
+**Kalau punya lebih dari satu Blob store yang di-connect ke project ini:**
+Vercel hanya memakai nama `BLOB_READ_WRITE_TOKEN` polos kalau cuma ada **satu** store. Begitu store kedua di-connect ke project yang sama, Vercel otomatis menamai env var token-nya pakai prefix custom (mis. `namastore_READ_WRITE_TOKEN`) supaya tidak bentrok — bukan `BLOB_READ_WRITE_TOKEN` lagi. Kode di `lib/blobData.js` sudah otomatis mendeteksi env var apa pun yang berakhiran `_READ_WRITE_TOKEN`, jadi ini biasanya langsung kebaca tanpa setting tambahan.
+
+Kalau mau pilih store tertentu secara pasti (misal punya 2+ store dan mau pastikan yang mana yang dipakai), buka Vercel Dashboard → Settings → Environment Variables, cari nama variable token Blob-nya, lalu set env var baru:
+
+```
+BLOB_TOKEN_ENV_NAME=nama_variable_token_yang_mau_dipakai
+```
+
+lalu redeploy. Kalau env var ini diisi, dia yang jadi prioritas utama.
 
 Untuk keamanan, disarankan juga mengisi `SESSION_SECRET` (string acak bebas) di Environment Variables Vercel — lihat `.env.example` untuk detail & cara mengganti password akun admin tanpa mengubah kode.
 

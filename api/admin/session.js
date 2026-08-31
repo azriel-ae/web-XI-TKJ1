@@ -4,7 +4,7 @@
 // =========================
 
 const { getLoggedInAdmin, isOwnerUsername } = require("../../lib/auth");
-const { isBlobEnabled } = require("../../lib/blobData");
+const { resolveBlobToken } = require("../../lib/blobData");
 
 module.exports = async function handler(req, res) {
     if (req.method !== "GET") {
@@ -17,11 +17,25 @@ module.exports = async function handler(req, res) {
     // tambahan, foto upload) hanya tersimpan sementara di satu instance
     // serverless dan TIDAK sinkron antar perangkat/region (ini penyebab
     // paling umum "di laptop ada datanya, di HP kosong").
-    const blobEnabled = isBlobEnabled();
+    //
+    // resolveBlobToken() tidak cuma cek `BLOB_READ_WRITE_TOKEN` polos,
+    // tapi juga env var custom yang Vercel bikin otomatis kalau ada
+    // lebih dari satu Blob store yang di-connect ke project ini
+    // (mis. `namastore_READ_WRITE_TOKEN`). envName dikirim juga (owner
+    // saja) supaya gampang dicek variable mana yang sebenarnya kepakai.
+    const { token, envName } = resolveBlobToken();
+    const blobEnabled = Boolean(token);
+    const isOwner = username ? isOwnerUsername(username) : false;
 
     if (!username) {
         return res.status(200).json({ loggedIn: false, blobEnabled });
     }
 
-    return res.status(200).json({ loggedIn: true, username, isOwner: isOwnerUsername(username), blobEnabled });
+    return res.status(200).json({
+        loggedIn: true,
+        username,
+        isOwner,
+        blobEnabled,
+        ...(isOwner ? { blobEnvName: envName } : {})
+    });
 };
