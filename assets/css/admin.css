@@ -321,6 +321,33 @@
 .admin-panel { display: none; flex-direction: column; gap: 20px; }
 .admin-panel.is-active { display: flex; }
 
+.admin-alert-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #fff8e6;
+  border: 1px solid #f0c96b;
+  border-radius: var(--admin-radius-card);
+  padding: 16px clamp(16px, 3vw, 22px);
+  color: #7a5a00;
+}
+.admin-alert-banner i {
+  font-size: 1.1rem;
+  margin-top: 2px;
+  color: #b8860b;
+  flex-shrink: 0;
+}
+.admin-alert-banner strong {
+  display: block;
+  font-size: 0.92rem;
+  margin-bottom: 4px;
+}
+.admin-alert-banner p {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
 /* =========================================================================
    4. CARDS
    ========================================================================= */
