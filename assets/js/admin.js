@@ -188,6 +188,8 @@
   async function checkSession() {
     try {
       const data = await api("/api/admin/session");
+      const blobBanner = document.getElementById("blobWarningBanner");
+      if (blobBanner) blobBanner.hidden = data.blobEnabled !== false;
       if (data.loggedIn) {
         showDashboard(data.username, data.isOwner);
       } else {

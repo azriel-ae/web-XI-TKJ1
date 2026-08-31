@@ -118,6 +118,14 @@
 
       <main class="admin-main">
 
+        <div class="admin-alert-banner" id="blobWarningBanner" hidden>
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <div>
+            <strong>Vercel Blob belum tersambung.</strong>
+            <p>Data yang ditulis lewat panel ini (log aktivitas, akun admin tambahan, foto upload) hanya tersimpan sementara di satu server dan <u>tidak akan sama</u> antar perangkat/browser — ini penyebab data terlihat ada di satu perangkat tapi kosong di perangkat lain. Buka Vercel Dashboard → Storage → Create Database → Blob → hubungkan ke project ini, lalu redeploy. Lihat README bagian "Wajib disiapkan kalau di-deploy ke Vercel" untuk detail.</p>
+          </div>
+        </div>
+
         <!-- ===================== PANEL: DASHBOARD ===================== -->
         <section class="admin-panel is-active" data-panel-content="dashboard">
           <div class="admin-stats-grid" id="statsGrid">
