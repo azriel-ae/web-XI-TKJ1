@@ -4,7 +4,7 @@
 // Sukses -> set-cookie session admin (HttpOnly).
 // =========================
 
-const { verifyCredentials, createSessionToken, buildSessionCookie, isOwnerUsername } = require("../../lib/auth");
+const { verifyCredentials, createSessionToken, buildSessionCookie, isOwnerUsername, getAdminInfoByUsername } = require("../../lib/auth");
 const { logActivity } = require("../../lib/activityLog");
 
 module.exports = async function handler(req, res) {
@@ -30,5 +30,13 @@ module.exports = async function handler(req, res) {
 
     await logActivity("login", validUsername, "Berhasil login ke panel admin.");
 
-    return res.status(200).json({ ok: true, username: validUsername, isOwner: isOwnerUsername(validUsername) });
+    const info = await getAdminInfoByUsername(validUsername);
+
+    return res.status(200).json({
+        ok: true,
+        username: validUsername,
+        isOwner: isOwnerUsername(validUsername),
+        role: info.role,
+        assignedAbsen: info.assignedAbsen
+    });
 };

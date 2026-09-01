@@ -191,7 +191,7 @@
       const blobBanner = document.getElementById("blobWarningBanner");
       if (blobBanner) blobBanner.hidden = data.blobEnabled !== false;
       if (data.loggedIn) {
-        showDashboard(data.username, data.isOwner);
+        showDashboard(data.username, data.isOwner, data.role, data.assignedAbsen);
       } else {
         showLogin();
       }
@@ -206,11 +206,21 @@
   }
 
   let currentIsOwner = false;
+  let currentRole = "admin";
+  let currentAssignedAbsen = [];
 
-  function showDashboard(username, isOwner) {
+  const ROLE_LABELS = {
+    super_admin: "Super Admin (Owner)",
+    admin: "Admin",
+    siswa: "Siswa"
+  };
+
+  function showDashboard(username, isOwner, role, assignedAbsen) {
     loginView.hidden = true;
     dashboardView.hidden = false;
     currentIsOwner = !!isOwner;
+    currentRole = role || (isOwner ? "super_admin" : "admin");
+    currentAssignedAbsen = Array.isArray(assignedAbsen) ? assignedAbsen : [];
     document.getElementById("adminWhoami").innerHTML =
       `<i class="fa-solid fa-circle-user"></i> ${escapeHtml(username)}${isOwner ? " (owner)" : ""}`;
 
@@ -255,7 +265,7 @@
         method: "POST",
         body: JSON.stringify({ username, password })
       });
-      showDashboard(data.username, data.isOwner);
+      showDashboard(data.username, data.isOwner, data.role, data.assignedAbsen);
     } catch (error) {
       errorEl.textContent = error.message;
       errorEl.hidden = false;
@@ -451,6 +461,15 @@
       return;
     }
 
+    // Akun ber-role "siswa" hanya boleh mengedit siswa yang sudah
+    // dipilihkan owner. Tombol edit untuk siswa lain disembunyikan di sini,
+    // TAPI ini murni pengalaman UI — pembatasan yang sebenarnya tetap
+    // ditegakkan di server (lihat lib/auth.js canEditSiswa & endpoint
+    // siswa-data / siswa-foto).
+    function canEdit(absen) {
+      return currentRole !== "siswa" || currentAssignedAbsen.includes(absen);
+    }
+
     tableBody.innerHTML = items.map(s => `
       <tr>
         <td><img class="admin-table-avatar" src="${s.foto}" alt="Foto ${escapeHtml(s.nama)}" onerror="this.src='assets/img/logo/default-avatar.png'"></td>
@@ -459,10 +478,11 @@
         <td>${s.jk === "P" ? "Perempuan" : "Laki-laki"}</td>
         <td>${s.ig ? `<span class="admin-table-muted">@${escapeHtml(s.ig)}</span>` : "—"}</td>
         <td>
+          ${canEdit(s.absen) ? `
           <div class="admin-table-actions">
             <button type="button" class="admin-btn admin-btn-ghost" data-edit-absen="${s.absen}"><i class="fa-solid fa-camera"></i> Foto</button>
             <button type="button" class="admin-btn admin-btn-ghost" data-edit-data-absen="${s.absen}"><i class="fa-solid fa-pen"></i> Data</button>
-          </div>
+          </div>` : '<span class="admin-table-muted">—</span>'}
         </td>
       </tr>`).join("");
 
@@ -473,10 +493,11 @@
           <div class="admin-siswa-card-name">${escapeHtml(s.nama)}</div>
           <div class="admin-siswa-card-meta">${escapeHtml(s.nis) || "—"} · ${s.ig ? `@${escapeHtml(s.ig)}` : "—"}</div>
         </div>
+        ${canEdit(s.absen) ? `
         <div class="admin-siswa-card-actions">
           <button type="button" class="admin-btn-icon-danger" style="color:var(--color-charcoal)" data-edit-absen="${s.absen}" aria-label="Ubah foto"><i class="fa-solid fa-camera"></i></button>
           <button type="button" class="admin-btn-icon-danger" style="color:var(--color-charcoal)" data-edit-data-absen="${s.absen}" aria-label="Ubah data"><i class="fa-solid fa-pen"></i></button>
-        </div>
+        </div>` : ""}
       </div>`).join("");
   }
 
@@ -655,8 +676,38 @@
   document.getElementById("openCreateAdminBtn").addEventListener("click", () => {
     document.getElementById("createAdminForm").reset();
     setStatus(document.getElementById("createAdminStatus"), "", null);
+    document.getElementById("newAdminRole").value = "admin";
+    toggleAssignedSiswaField();
+    renderAssignedSiswaOptions();
     createAdminModal.classList.add("is-open");
     createAdminModal.setAttribute("aria-hidden", "false");
+  });
+
+  function toggleAssignedSiswaField() {
+    const role = document.getElementById("newAdminRole").value;
+    const wrap = document.getElementById("assignedSiswaWrap");
+    wrap.hidden = role !== "siswa";
+  }
+  document.getElementById("newAdminRole").addEventListener("change", toggleAssignedSiswaField);
+
+  function renderAssignedSiswaOptions() {
+    const list = document.getElementById("assignedSiswaList");
+    if (!allSiswa.length) {
+      list.innerHTML = '<p class="empty-state">Data siswa belum dimuat.</p>';
+      return;
+    }
+    list.innerHTML = allSiswa.map(s => `
+      <label class="admin-checkbox-item">
+        <input type="checkbox" value="${s.absen}" name="assignedSiswa">
+        <span>${escapeHtml(s.nama)} <span class="admin-table-muted">(absen ${s.absen})</span></span>
+      </label>`).join("");
+  }
+
+  document.getElementById("assignedSiswaSearch").addEventListener("input", event => {
+    const query = event.target.value.trim().toLowerCase();
+    document.querySelectorAll("#assignedSiswaList .admin-checkbox-item").forEach(el => {
+      el.hidden = !el.textContent.toLowerCase().includes(query);
+    });
   });
 
   function closeCreateAdminModal() {
@@ -692,16 +743,30 @@
       tableBody.innerHTML = '<tr><td colspan="3"><p class="empty-state">Belum ada data admin</p></td></tr>';
       return;
     }
-    tableBody.innerHTML = admins.map(a => `
+    const roleBadgeClass = { super_admin: "admin-badge-owner", admin: "", siswa: "admin-badge-siswa" };
+    const roleLabel = { super_admin: "Owner", admin: "Admin", siswa: "Siswa" };
+    tableBody.innerHTML = admins.map(a => {
+      const assignedNames = (a.assignedAbsen || [])
+        .map(absen => {
+          const s = allSiswa.find(x => x.absen === absen);
+          return s ? s.nama : `absen ${absen}`;
+        });
+      return `
       <tr>
         <td class="admin-table-name">${escapeHtml(a.username)}</td>
-        <td><span class="admin-badge ${a.isOwner ? "admin-badge-owner" : ""}">${a.isOwner ? "Owner" : "Admin"}</span></td>
+        <td>
+          <span class="admin-badge ${roleBadgeClass[a.role] || ""}">${roleLabel[a.role] || "Admin"}</span>
+          ${a.role === "siswa" && assignedNames.length
+            ? `<div class="admin-table-muted" style="margin-top:4px;font-size:0.75rem;">${escapeHtml(assignedNames.join(", "))}</div>`
+            : ""}
+        </td>
         <td>
           ${a.removable
             ? `<button type="button" class="admin-btn admin-btn-ghost" data-delete-admin="${escapeHtml(a.username)}"><i class="fa-solid fa-trash"></i> Hapus</button>`
             : '<span class="admin-table-muted">—</span>'}
         </td>
-      </tr>`).join("");
+      </tr>`;
+    }).join("");
   }
 
   document.getElementById("adminsTableBody").addEventListener("click", async event => {
@@ -737,6 +802,7 @@
 
     const username = document.getElementById("newAdminUsername").value.trim();
     const password = document.getElementById("newAdminPassword").value;
+    const role = document.getElementById("newAdminRole").value;
 
     if (!username) {
       setStatus(statusEl, "Username wajib diisi.", "error");
@@ -747,11 +813,21 @@
       return;
     }
 
+    let assignedAbsen = [];
+    if (role === "siswa") {
+      assignedAbsen = Array.from(document.querySelectorAll('#assignedSiswaList input[name="assignedSiswa"]:checked'))
+        .map(el => Number(el.value));
+      if (!assignedAbsen.length) {
+        setStatus(statusEl, "Pilih minimal satu siswa yang boleh diedit akun ini.", "error");
+        return;
+      }
+    }
+
     toggleSpinner(button, true);
     try {
       await api("/api/admin/admins", {
         method: "POST",
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ username, password, role, assignedAbsen })
       });
       showToast(`Admin berhasil dibuat.`, "success");
       event.target.reset();

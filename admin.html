@@ -430,6 +430,18 @@
             </button>
           </div>
         </div>
+        <div class="admin-field">
+          <label for="newAdminRole">Role</label>
+          <select id="newAdminRole" class="admin-select">
+            <option value="admin">Admin (fitur terbatas — tidak bisa kelola admin/log, tidak bisa hapus foto galeri)</option>
+            <option value="siswa">Siswa (hanya bisa mengedit data & foto siswa yang dipilih di bawah)</option>
+          </select>
+        </div>
+        <div class="admin-field" id="assignedSiswaWrap" hidden>
+          <label for="assignedSiswaSearch">Siswa yang boleh diedit akun ini</label>
+          <input id="assignedSiswaSearch" type="text" placeholder="Cari nama siswa...">
+          <div id="assignedSiswaList" class="admin-checkbox-list"></div>
+        </div>
         <div class="admin-modal-actions">
           <button type="button" class="admin-btn admin-btn-secondary" data-close-modal>Batal</button>
           <button type="submit" class="admin-btn admin-btn-primary" id="createAdminSubmit">

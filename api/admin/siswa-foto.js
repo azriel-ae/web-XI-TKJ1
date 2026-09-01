@@ -5,7 +5,7 @@
 // =========================
 
 const baseSiswa = require("../../data/siswa.json");
-const { getLoggedInAdmin } = require("../../lib/auth");
+const { getLoggedInAdminInfo, canEditSiswa } = require("../../lib/auth");
 const { readJson, writeJson, uploadImage } = require("../../lib/blobData");
 const { decodeImagePayload, safeFileNamePart } = require("../../lib/http");
 const { logActivity } = require("../../lib/activityLog");
@@ -15,10 +15,11 @@ module.exports = async function handler(req, res) {
         return res.status(405).json({ error: "Method tidak diizinkan" });
     }
 
-    const admin = getLoggedInAdmin(req);
-    if (!admin) {
+    const adminInfo = await getLoggedInAdminInfo(req);
+    if (!adminInfo) {
         return res.status(401).json({ error: "Silakan login sebagai admin terlebih dahulu." });
     }
+    const admin = adminInfo.username;
 
     const body = req.body || {};
     const absen = Number(body.absen);
@@ -26,6 +27,12 @@ module.exports = async function handler(req, res) {
     const student = baseSiswa.find(s => s.absen === absen);
     if (!student) {
         return res.status(404).json({ error: "Siswa dengan nomor absen tersebut tidak ditemukan." });
+    }
+
+    // Akun ber-role siswa hanya boleh mengganti foto siswa yang sudah
+    // dipilihkan owner saat akun dibuat.
+    if (!canEditSiswa(adminInfo, absen)) {
+        return res.status(403).json({ error: "Anda tidak memiliki izin untuk mengubah foto siswa ini." });
     }
 
     let image;
