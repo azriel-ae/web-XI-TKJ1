@@ -577,7 +577,7 @@
 
     toggleSpinner(button, true);
     try {
-      await api("/api/admin/siswa-data", {
+      await api("/api/admin/siswa?action=data", {
         method: "POST",
         body: JSON.stringify({ absen, nama, nis, jk, ig })
       });
@@ -654,7 +654,7 @@
     try {
       const foto = await fileToPayload(file);
       const absen = Number(document.getElementById("siswaFotoAbsen").value);
-      await api("/api/admin/siswa-foto", {
+      await api("/api/admin/siswa?action=foto", {
         method: "POST",
         body: JSON.stringify({ absen, foto })
       });

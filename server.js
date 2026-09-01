@@ -17,8 +17,7 @@ const { runVercelStyleHandler } = require("./lib/http");
 const adminAuthHandler = require("./api/admin/auth");
 const adminSessionHandler = require("./api/admin/session");
 const adminGalleryHandler = require("./api/admin/gallery");
-const adminSiswaFotoHandler = require("./api/admin/siswa-foto");
-const adminSiswaDataHandler = require("./api/admin/siswa-data");
+const adminSiswaHandler = require("./api/admin/siswa");
 const adminAdminsHandler = require("./api/admin/admins");
 const galleryHandler = require("./api/gallery");
 const siswaHandler = require("./api/siswa");
@@ -183,8 +182,7 @@ const server = http.createServer((req, res) => {
         "/api/admin/auth": adminAuthHandler,
         "/api/admin/session": adminSessionHandler,
         "/api/admin/gallery": adminGalleryHandler,
-        "/api/admin/siswa-foto": adminSiswaFotoHandler,
-        "/api/admin/siswa-data": adminSiswaDataHandler,
+        "/api/admin/siswa": adminSiswaHandler,
         "/api/admin/admins": adminAdminsHandler,
         "/api/gallery": galleryHandler,
         "/api/siswa": siswaHandler,
