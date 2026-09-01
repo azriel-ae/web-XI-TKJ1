@@ -262,7 +262,7 @@
     try {
       const username = document.getElementById("loginUsername").value.trim();
       const password = document.getElementById("loginPassword").value;
-      const data = await api("/api/admin/login", {
+      const data = await api("/api/admin/auth?action=login", {
         method: "POST",
         body: JSON.stringify({ username, password })
       });
@@ -282,7 +282,7 @@
       okLabel: "Keluar"
     });
     if (!confirmed) return;
-    try { await api("/api/admin/logout", { method: "POST" }); } catch { /* ignore */ }
+    try { await api("/api/admin/auth?action=logout", { method: "POST" }); } catch { /* ignore */ }
     showLogin();
   });
 

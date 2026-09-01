@@ -14,8 +14,7 @@ const { runVercelStyleHandler } = require("./lib/http");
 
 // Handler admin & data dinamis dipakai bersama dengan Vercel (api/**)
 // supaya tidak ada logika yang dobel antara mode lokal & deploy.
-const adminLoginHandler = require("./api/admin/login");
-const adminLogoutHandler = require("./api/admin/logout");
+const adminAuthHandler = require("./api/admin/auth");
 const adminSessionHandler = require("./api/admin/session");
 const adminGalleryHandler = require("./api/admin/gallery");
 const adminSiswaFotoHandler = require("./api/admin/siswa-foto");
@@ -181,8 +180,7 @@ const server = http.createServer((req, res) => {
 
     // API: admin & data dinamis (login, upload galeri, ubah foto siswa)
     const apiRoutes = {
-        "/api/admin/login": adminLoginHandler,
-        "/api/admin/logout": adminLogoutHandler,
+        "/api/admin/auth": adminAuthHandler,
         "/api/admin/session": adminSessionHandler,
         "/api/admin/gallery": adminGalleryHandler,
         "/api/admin/siswa-foto": adminSiswaFotoHandler,
