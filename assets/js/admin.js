@@ -441,13 +441,22 @@
       allSiswa = await api("/api/siswa");
       statsState.siswa = allSiswa.length;
       renderStats();
-      renderSiswaAdmin(allSiswa);
+      renderSiswaAdmin(getVisibleSiswa());
     } catch (error) {
       const errorHtml = `<div class="empty-state is-error"><i class="fa-solid fa-triangle-exclamation"></i>Data gagal dimuat.<br>
         <button type="button" class="empty-state-retry" data-retry="siswa"><i class="fa-solid fa-rotate-right"></i> Coba Lagi</button></div>`;
       document.getElementById("siswaTableBody").innerHTML = `<tr><td colspan="6">${errorHtml}</td></tr>`;
       document.getElementById("siswaCardList").innerHTML = errorHtml;
     }
+  }
+
+  // Akun ber-role "siswa" cuma boleh mengedit siswa yang sudah dipilihkan
+  // owner saat akun dibuat -> di panel "Siswa", tampilkan HANYA siswa itu
+  // (bukan seluruh daftar), supaya jelas ruang lingkupnya. Role admin/owner
+  // tetap melihat & bisa mengedit seluruh daftar siswa seperti biasa.
+  function getVisibleSiswa() {
+    if (currentRole !== "siswa") return allSiswa;
+    return allSiswa.filter(s => currentAssignedAbsen.includes(s.absen));
   }
 
   function renderSiswaAdmin(items) {
@@ -461,15 +470,6 @@
       return;
     }
 
-    // Akun ber-role "siswa" hanya boleh mengedit siswa yang sudah
-    // dipilihkan owner. Tombol edit untuk siswa lain disembunyikan di sini,
-    // TAPI ini murni pengalaman UI — pembatasan yang sebenarnya tetap
-    // ditegakkan di server (lihat lib/auth.js canEditSiswa & endpoint
-    // siswa-data / siswa-foto).
-    function canEdit(absen) {
-      return currentRole !== "siswa" || currentAssignedAbsen.includes(absen);
-    }
-
     tableBody.innerHTML = items.map(s => `
       <tr>
         <td><img class="admin-table-avatar" src="${s.foto}" alt="Foto ${escapeHtml(s.nama)}" onerror="this.src='assets/img/logo/default-avatar.png'"></td>
@@ -478,11 +478,10 @@
         <td>${s.jk === "P" ? "Perempuan" : "Laki-laki"}</td>
         <td>${s.ig ? `<span class="admin-table-muted">@${escapeHtml(s.ig)}</span>` : "—"}</td>
         <td>
-          ${canEdit(s.absen) ? `
           <div class="admin-table-actions">
             <button type="button" class="admin-btn admin-btn-ghost" data-edit-absen="${s.absen}"><i class="fa-solid fa-camera"></i> Foto</button>
             <button type="button" class="admin-btn admin-btn-ghost" data-edit-data-absen="${s.absen}"><i class="fa-solid fa-pen"></i> Data</button>
-          </div>` : '<span class="admin-table-muted">—</span>'}
+          </div>
         </td>
       </tr>`).join("");
 
@@ -493,17 +492,16 @@
           <div class="admin-siswa-card-name">${escapeHtml(s.nama)}</div>
           <div class="admin-siswa-card-meta">${escapeHtml(s.nis) || "—"} · ${s.ig ? `@${escapeHtml(s.ig)}` : "—"}</div>
         </div>
-        ${canEdit(s.absen) ? `
         <div class="admin-siswa-card-actions">
           <button type="button" class="admin-btn-icon-danger" style="color:var(--color-charcoal)" data-edit-absen="${s.absen}" aria-label="Ubah foto"><i class="fa-solid fa-camera"></i></button>
           <button type="button" class="admin-btn-icon-danger" style="color:var(--color-charcoal)" data-edit-data-absen="${s.absen}" aria-label="Ubah data"><i class="fa-solid fa-pen"></i></button>
-        </div>` : ""}
+        </div>
       </div>`).join("");
   }
 
   document.getElementById("siswaSearch").addEventListener("input", event => {
     const query = event.target.value.trim().toLowerCase();
-    renderSiswaAdmin(allSiswa.filter(s => s.nama.toLowerCase().includes(query)));
+    renderSiswaAdmin(getVisibleSiswa().filter(s => s.nama.toLowerCase().includes(query)));
   });
 
   function bindSiswaActions(container) {
