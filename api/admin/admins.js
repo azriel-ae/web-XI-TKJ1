@@ -3,6 +3,8 @@
 // GET    -> daftar akun admin (tanpa password)
 //           GET ?resource=activity-log -> daftar log aktivitas panel admin
 // POST   -> buat akun admin baru (body: { username, password })
+// PATCH  -> ubah username/password akun admin tambahan yang sudah ada
+//           (body: { username, newUsername?, newPassword? })
 // DELETE -> hapus akun admin tambahan (body: { username })
 //
 // CATATAN: log aktivitas sengaja digabung ke file ini (bukan file API
@@ -17,6 +19,7 @@ const {
     listAdminAccounts,
     createAdminAccount,
     deleteAdminAccount,
+    updateAdminAccount,
     ROLES,
     normalizeAssignedAbsen
 } = require("../../lib/auth");
@@ -97,6 +100,40 @@ module.exports = async function handler(req, res) {
             await deleteAdminAccount(body.username);
             await logActivity("admin_delete", admin, `Menghapus akun admin: "${body.username}".`);
             return res.status(200).json({ ok: true });
+        } catch (error) {
+            return res.status(400).json({ error: error.message });
+        }
+    }
+
+    // PATCH -> ubah username dan/atau password akun admin tambahan yang
+    // sudah ada (body: { username, newUsername?, newPassword? }). Dipakai
+    // owner (azriel/david) buat edit akun admin/siswa yang dibuat lewat
+    // panel — baik akun yang sudah ada sekarang maupun yang dibuat nanti.
+    if (req.method === "PATCH") {
+        const body = req.body || {};
+        if (!body.username) {
+            return res.status(400).json({ error: "Username wajib diisi." });
+        }
+        try {
+            const updated = await updateAdminAccount(
+                body.username,
+                { newUsername: body.newUsername, newPassword: body.newPassword },
+                admin
+            );
+
+            const changes = [];
+            if (body.newUsername && String(body.newUsername).trim().toLowerCase() !== String(body.username).trim().toLowerCase()) {
+                changes.push(`username -> "${updated.username}"`);
+            }
+            if (body.newPassword) changes.push("password diganti");
+
+            await logActivity(
+                "admin_update",
+                admin,
+                `Mengubah akun admin "${body.username}"${changes.length ? `: ${changes.join(", ")}.` : "."}`
+            );
+
+            return res.status(200).json({ ok: true, username: updated.username, role: updated.role, assignedAbsen: updated.assignedAbsen });
         } catch (error) {
             return res.status(400).json({ error: error.message });
         }

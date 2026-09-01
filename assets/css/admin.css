@@ -498,16 +498,49 @@
 }
 .admin-password-toggle:hover { background: var(--color-offwhite); color: var(--color-charcoal); }
 
+.admin-inline-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #fff7e6;
+  border: 1px solid #f2c777;
+  color: #7a5200;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+.admin-inline-warning i { margin-top: 2px; }
+.admin-inline-warning code {
+  background: rgba(0, 0, 0, 0.08);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.admin-table-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-field-hint {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-top: 6px;
+}
+
 .admin-search-field { position: relative; margin-bottom: 16px; }
 .admin-search-field .search-icon {
   position: absolute;
-  left: 14px;
+  left: 16px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--color-text-muted);
+  font-size: 14px;
   pointer-events: none;
 }
-.admin-search-field input { padding-left: 40px; background: var(--color-offwhite); }
+.admin-search-field input { padding-left: 46px; background: var(--color-offwhite); }
 .admin-search-field input:focus { background: #fff; }
 
 /* Upload area */

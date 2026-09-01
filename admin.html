@@ -276,6 +276,7 @@
                   </tr>
                 </thead>
                 <tbody id="adminsTableBody"></tbody>
+                <!-- Tombol "Edit" & "Hapus" dirender lewat JS (lihat renderAdmins di assets/js/admin.js) -->
               </table>
             </div>
           </div>
@@ -292,6 +293,13 @@
               <button type="button" class="admin-btn admin-btn-secondary" id="refreshLogBtn">
                 <i class="fa-solid fa-rotate-right"></i> Muat Ulang
               </button>
+            </div>
+
+            <div id="privateBlobWarning" class="admin-inline-warning" hidden>
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              Store Blob "Private" belum tersambung. Log aktivitas &amp; akun admin tambahan saat ini hanya tersimpan sementara
+              (tidak persist di deployment Vercel) supaya datanya tidak nyasar ke store public. Sambungkan store Blob dengan
+              akses "Private" lewat dashboard Vercel (prefix env var <code>PRIVATE_</code>) supaya tersimpan permanen.
             </div>
 
             <div class="admin-table-wrap">
@@ -442,6 +450,40 @@
           </button>
         </div>
         <div id="createAdminStatus" class="admin-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: edit admin (username/password) -->
+  <div id="editAdminModal" class="admin-modal" aria-hidden="true">
+    <div class="admin-modal-backdrop" data-close-modal></div>
+    <div class="admin-modal-content">
+      <button type="button" class="admin-modal-close" data-close-modal aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button>
+      <h3>Edit Akun Admin</h3>
+      <form id="editAdminForm" class="admin-form">
+        <input type="hidden" id="editAdminOriginalUsername">
+        <div class="admin-field">
+          <label for="editAdminUsername">Username</label>
+          <input id="editAdminUsername" type="text" placeholder="Contoh: budi" autocomplete="off" required>
+        </div>
+        <div class="admin-field">
+          <label for="editAdminPassword">Password baru</label>
+          <div class="admin-password-wrap">
+            <input id="editAdminPassword" type="password" placeholder="Kosongkan kalau tidak diganti" autocomplete="new-password">
+            <button type="button" class="admin-password-toggle" id="editAdminPasswordToggle" aria-label="Tampilkan password">
+              <i class="fa-regular fa-eye"></i>
+            </button>
+          </div>
+          <p class="admin-field-hint">Biarkan kosong kalau password tidak ingin diubah.</p>
+        </div>
+        <div class="admin-modal-actions">
+          <button type="button" class="admin-btn admin-btn-secondary" data-close-modal>Batal</button>
+          <button type="submit" class="admin-btn admin-btn-primary" id="editAdminSubmit">
+            <span class="admin-spinner" hidden></span>
+            <span>Simpan Perubahan</span>
+          </button>
+        </div>
+        <div id="editAdminStatus" class="admin-status" role="status" aria-live="polite"></div>
       </form>
     </div>
   </div>

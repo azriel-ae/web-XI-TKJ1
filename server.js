@@ -215,6 +215,18 @@ const server = http.createServer((req, res) => {
         return res.end("403 Forbidden");
     }
 
+    // Jangan pernah serve folder data-private/ (fallback lokal untuk
+    // activity log & akun admin saat store Blob "Private" belum di-setup)
+    // sebagai file statis biasa. Data itu HANYA boleh keluar lewat
+    // endpoint API yang sudah dijaga login+role (lihat lib/blobData.js).
+    if (requested.startsWith("/data-private/")) {
+        res.writeHead(403, {
+            "Content-Type": "text/plain; charset=utf-8"
+        });
+
+        return res.end("403 Forbidden");
+    }
+
     fs.readFile(filePath, (error, content) => {
         if (error) {
             res.writeHead(404, {

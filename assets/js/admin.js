@@ -117,6 +117,7 @@
   }
   wirePasswordToggle("loginPassword", "loginPasswordToggle");
   wirePasswordToggle("newAdminPassword", "newAdminPasswordToggle");
+  wirePasswordToggle("editAdminPassword", "editAdminPasswordToggle");
 
   // ---------- konfirmasi sebelum kembali ke website ----------
   function wireBackToSiteConfirm(linkId) {
@@ -190,6 +191,8 @@
       const data = await api("/api/admin/session");
       if (data.loggedIn) {
         showDashboard(data.username, data.isOwner, data.role, data.assignedAbsen);
+        const warningEl = document.getElementById("privateBlobWarning");
+        if (warningEl) warningEl.hidden = !data.isOwner || !!data.privateBlobEnabled;
       } else {
         showLogin();
       }
@@ -758,7 +761,10 @@
         </td>
         <td>
           ${a.removable
-            ? `<button type="button" class="admin-btn admin-btn-ghost" data-delete-admin="${escapeHtml(a.username)}"><i class="fa-solid fa-trash"></i> Hapus</button>`
+            ? `<div class="admin-table-actions">
+                <button type="button" class="admin-btn admin-btn-ghost" data-edit-admin="${escapeHtml(a.username)}"><i class="fa-solid fa-pen"></i> Edit</button>
+                <button type="button" class="admin-btn admin-btn-ghost" data-delete-admin="${escapeHtml(a.username)}"><i class="fa-solid fa-trash"></i> Hapus</button>
+              </div>`
             : '<span class="admin-table-muted">—</span>'}
         </td>
       </tr>`;
@@ -768,6 +774,12 @@
   document.getElementById("adminsTableBody").addEventListener("click", async event => {
     const retryBtn = event.target.closest("[data-retry]");
     if (retryBtn) { loadAdmins(); return; }
+
+    const editBtn = event.target.closest("[data-edit-admin]");
+    if (editBtn) {
+      openEditAdminModal(editBtn.dataset.editAdmin);
+      return;
+    }
 
     const btn = event.target.closest("[data-delete-admin]");
     if (!btn) return;
@@ -787,6 +799,63 @@
       loadAdmins();
     } catch (error) {
       showToast(error.message || "Terjadi kesalahan.", "error");
+    }
+  });
+
+  // ---------- edit akun admin (username/password) - khusus owner ----------
+  const editAdminModal = document.getElementById("editAdminModal");
+  bindModalClose(editAdminModal);
+
+  function openEditAdminModal(username) {
+    document.getElementById("editAdminForm").reset();
+    setStatus(document.getElementById("editAdminStatus"), "", null);
+    document.getElementById("editAdminOriginalUsername").value = username;
+    document.getElementById("editAdminUsername").value = username;
+    editAdminModal.classList.add("is-open");
+    editAdminModal.setAttribute("aria-hidden", "false");
+  }
+
+  function closeEditAdminModal() {
+    editAdminModal.classList.remove("is-open");
+    editAdminModal.setAttribute("aria-hidden", "true");
+  }
+
+  document.getElementById("editAdminForm").addEventListener("submit", async event => {
+    event.preventDefault();
+    const button = document.getElementById("editAdminSubmit");
+    const statusEl = document.getElementById("editAdminStatus");
+    setStatus(statusEl, "", null);
+
+    const originalUsername = document.getElementById("editAdminOriginalUsername").value;
+    const newUsername = document.getElementById("editAdminUsername").value.trim();
+    const newPassword = document.getElementById("editAdminPassword").value;
+
+    if (!newUsername) {
+      setStatus(statusEl, "Username wajib diisi.", "error");
+      return;
+    }
+    if (newUsername === originalUsername && !newPassword) {
+      setStatus(statusEl, "Tidak ada perubahan. Ubah username atau isi password baru.", "error");
+      return;
+    }
+
+    toggleSpinner(button, true);
+    try {
+      await api("/api/admin/admins", {
+        method: "PATCH",
+        body: JSON.stringify({
+          username: originalUsername,
+          newUsername: newUsername !== originalUsername ? newUsername : undefined,
+          newPassword: newPassword || undefined
+        })
+      });
+      showToast("Akun admin berhasil diubah.", "success");
+      loadAdmins();
+      closeEditAdminModal();
+    } catch (error) {
+      setStatus(statusEl, error.message || "Terjadi kesalahan.", "error");
+    } finally {
+      toggleSpinner(button, false);
     }
   });
 
@@ -846,6 +915,7 @@
     siswa_edit: "Ubah data siswa",
     siswa_foto_edit: "Ubah foto siswa",
     admin_create: "Buat akun admin",
+    admin_update: "Ubah akun admin",
     admin_delete: "Hapus akun admin"
   };
 
