@@ -6,7 +6,7 @@
 
 const crypto = require("crypto");
 const { getLoggedInAdmin, isOwnerUsername } = require("../../lib/auth");
-const { readJson, writeJson, uploadImage, deleteImage } = require("../../lib/blobData");
+const { readJson, writeJson, uploadImage, deleteImage } = require("../../lib/kvStore");
 const { decodeImagePayload, safeFileNamePart } = require("../../lib/http");
 const { logActivity } = require("../../lib/activityLog");
 

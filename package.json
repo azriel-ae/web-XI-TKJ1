@@ -24,7 +24,6 @@
   "homepage": "https://github.com/azriel-ae/web-XI-TKJ1#readme",
   "dependencies": {
     "@google/genai": "^2.16.0",
-    "@vercel/blob": "^2.8.0",
     "dotenv": "^17.4.2"
   }
 }

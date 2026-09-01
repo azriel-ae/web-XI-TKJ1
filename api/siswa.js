@@ -6,7 +6,7 @@
 // =========================
 
 const baseSiswa = require("../data/siswa.json");
-const { readJson } = require("../lib/blobData");
+const { readJson } = require("../lib/kvStore");
 
 module.exports = async function handler(req, res) {
     if (req.method !== "GET") {

@@ -6,7 +6,7 @@
 
 const baseSiswa = require("../../data/siswa.json");
 const { getLoggedInAdminInfo, canEditSiswa } = require("../../lib/auth");
-const { readJson, writeJson, uploadImage } = require("../../lib/blobData");
+const { readJson, writeJson, uploadImage } = require("../../lib/kvStore");
 const { decodeImagePayload, safeFileNamePart } = require("../../lib/http");
 const { logActivity } = require("../../lib/activityLog");
 

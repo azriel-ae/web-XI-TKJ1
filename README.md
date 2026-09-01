@@ -35,13 +35,19 @@ Setelah login, admin bisa:
 
 ### Wajib disiapkan kalau di-deploy ke Vercel
 
-Filesystem Vercel bersifat *read-only* saat runtime, jadi foto yang diupload admin **tidak akan tersimpan** tanpa **Vercel Blob Storage**:
+Filesystem Vercel bersifat *read-only* & sementara saat runtime (tiap function bisa jalan di instance berbeda-beda), jadi akun admin, log aktivitas, override data/foto siswa, dan foto galeri yang ditambah lewat panel `/admin` **tidak akan tersimpan** tanpa penyimpanan permanen. Vercel KV yang dulu dipakai **sudah dihapus** — sekarang datanya disimpan permanen lewat **commit ke GitHub repo** (GitHub Contents API):
 
-1. Buka project ini di Vercel Dashboard → tab **Storage** → **Create Database** → pilih **Blob** → hubungkan ke project.
-2. Vercel otomatis mengisi environment variable `BLOB_READ_WRITE_TOKEN` — tidak perlu copy manual.
+1. Buat Personal Access Token di GitHub (Settings → Developer settings → Fine-grained tokens) dengan akses read+write "Contents" ke repo tujuan.
+2. Di Vercel Dashboard → **Settings → Environment Variables**, isi:
+   - `GITHUB_TOKEN` = token di atas
+   - `GITHUB_REPO` = `owner/nama-repo` (mis. `azriel-ae/web-XI-TKJ1`)
 3. Redeploy project.
 
-Tanpa langkah ini, panel admin tetap bisa login, tapi upload foto akan gagal tersimpan permanen di Vercel.
+> ⚠️ **Kalau repo yang dipakai untuk `GITHUB_REPO` bersifat PUBLIC**, semua data yang tersimpan lewat sini — termasuk password hash akun admin & log aktivitas — bisa dibaca siapa saja lewat github.com. Pastikan repo-nya **private**, atau pakai repo lain yang private khusus untuk penyimpanan data (boleh beda dari repo situs ini, cukup ganti `GITHUB_REPO`). Lihat `.env.example` dan komentar di `lib/kvStore.js` untuk detail.
+
+Tanpa langkah ini, panel admin tetap bisa login, tapi semua perubahan (akun baru, upload foto, edit data siswa) akan hilang lagi begitu Vercel memindahkan request ke instance server lain — biasanya kelihatan sebagai "sudah ditambah tapi tidak muncul lagi". Panel admin akan menampilkan peringatan ke owner kalau penyimpanan GitHub belum tersambung.
+
+**Log aktivitas otomatis terhapus setelah 30 hari** (data akun admin TIDAK ikut terhapus, tetap permanen selamanya).
 
 Untuk keamanan, disarankan juga mengisi `SESSION_SECRET` (string acak bebas) di Environment Variables Vercel — lihat `.env.example` untuk detail & cara mengganti password akun admin tanpa mengubah kode.
 
@@ -50,9 +56,9 @@ Untuk keamanan, disarankan juga mengisi `SESSION_SECRET` (string acak bebas) di 
 Section **Kontak Kelas** menampilkan foto profil Instagram (`@tkj.1networks_`) dan TikTok (`@xitkj1smk1npol`) secara dinamis lewat `/api/social`, yang mengambil data hanya lewat **API resmi** masing-masing platform (Meta Graph API & TikTok Display API) — tidak ada scraping maupun endpoint tidak resmi.
 
 - Kalau environment variable terkait (lihat `.env.example`) belum diisi, avatar otomatis memakai **fallback** berupa inisial `IG`/`TT` sesuai design system. Username dan link tetap tampil normal.
-- Hasil dari API resmi disimpan sementara di cache server (lewat mekanisme yang sama dengan `lib/blobData.js`) selama beberapa jam, supaya halaman tidak memicu request baru setiap kali dibuka.
+- Hasil dari API resmi disimpan sementara di cache server (lewat mekanisme yang sama dengan `lib/kvStore.js`) selama beberapa jam, supaya halaman tidak memicu request baru setiap kali dibuka.
 - Kegagalan API (token kedaluwarsa, rate limit, dll.) tidak pernah membuat halaman rusak — otomatis jatuh ke cache terakhir yang masih berlaku, atau ke fallback.
 
 ### Coba lokal
 
-Jalan langsung dengan `node server.js` tanpa setup Blob — foto yang diupload lewat `/admin` otomatis disimpan ke `data/gallery-extra.json`, `data/siswa-foto-overrides.json`, dan folder `assets/img/` di komputer sendiri (mode fallback, cuma untuk testing).
+Jalan langsung dengan `node server.js` tanpa setup KV — data & foto yang diupload lewat `/admin` otomatis disimpan ke `data/gallery-extra.json`, `data/siswa-foto-overrides.json`, `data-private/` (akun admin & log aktivitas), dan folder `assets/img/` di komputer sendiri (mode fallback, cuma untuk testing — persist selama komputer itu terus menjalankan `node server.js`).

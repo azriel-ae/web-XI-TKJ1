@@ -24,6 +24,7 @@ const adminAdminsHandler = require("./api/admin/admins");
 const galleryHandler = require("./api/gallery");
 const siswaHandler = require("./api/siswa");
 const socialHandler = require("./api/social");
+const imgHandler = require("./api/img");
 
 const MIME = {
     ".html": "text/html; charset=utf-8",
@@ -189,7 +190,8 @@ const server = http.createServer((req, res) => {
         "/api/admin/admins": adminAdminsHandler,
         "/api/gallery": galleryHandler,
         "/api/siswa": siswaHandler,
-        "/api/social": socialHandler
+        "/api/social": socialHandler,
+        "/api/img": imgHandler
     };
 
     if (apiRoutes[url.pathname]) {
@@ -216,9 +218,9 @@ const server = http.createServer((req, res) => {
     }
 
     // Jangan pernah serve folder data-private/ (fallback lokal untuk
-    // activity log & akun admin saat store Blob "Private" belum di-setup)
+    // activity log & akun admin saat database KV belum di-setup)
     // sebagai file statis biasa. Data itu HANYA boleh keluar lewat
-    // endpoint API yang sudah dijaga login+role (lihat lib/blobData.js).
+    // endpoint API yang sudah dijaga login+role (lihat lib/kvStore.js).
     if (requested.startsWith("/data-private/")) {
         res.writeHead(403, {
             "Content-Type": "text/plain; charset=utf-8"

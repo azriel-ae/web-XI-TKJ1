@@ -8,7 +8,7 @@
 
 const baseSiswa = require("../../data/siswa.json");
 const { getLoggedInAdminInfo, canEditSiswa } = require("../../lib/auth");
-const { readJson, writeJson } = require("../../lib/blobData");
+const { readJson, writeJson } = require("../../lib/kvStore");
 const { logActivity } = require("../../lib/activityLog");
 
 const DATA_OVERRIDES_KEY = "siswa-data-overrides.json";

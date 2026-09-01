@@ -295,11 +295,12 @@
               </button>
             </div>
 
-            <div id="privateBlobWarning" class="admin-inline-warning" hidden>
+            <div id="kvWarning" class="admin-inline-warning" hidden>
               <i class="fa-solid fa-triangle-exclamation"></i>
-              Store Blob "Private" belum tersambung. Log aktivitas &amp; akun admin tambahan saat ini hanya tersimpan sementara
-              (tidak persist di deployment Vercel) supaya datanya tidak nyasar ke store public. Sambungkan store Blob dengan
-              akses "Private" lewat dashboard Vercel (prefix env var <code>PRIVATE_</code>) supaya tersimpan permanen.
+              Database (Vercel KV) belum tersambung. Log aktivitas, akun admin tambahan, foto upload, dan perubahan data siswa
+              saat ini hanya tersimpan sementara di server dan bisa HILANG kapan saja (ini penyebab "akun baru dibuat tapi tidak
+              muncul lagi"). Buka dashboard Vercel &rarr; tab <b>Storage</b> &rarr; <b>Create Database</b> &rarr; pilih <b>KV</b>,
+              lalu connect ke project ini dan redeploy supaya datanya tersimpan permanen.
             </div>
 
             <div class="admin-table-wrap">
