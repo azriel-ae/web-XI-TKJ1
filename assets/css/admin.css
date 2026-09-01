@@ -738,6 +738,28 @@
   color: var(--color-gray);
 }
 .admin-badge-owner { background: var(--color-primary-soft-2); color: var(--color-lime-dark); }
+.admin-badge-siswa { background: #e6f0ff; color: #2454b0; }
+
+/* Daftar checkbox pemilihan siswa (form tambah admin, role "siswa") */
+.admin-checkbox-list {
+  max-height: 220px;
+  overflow-y: auto;
+  border: 1px solid var(--color-light-gray);
+  border-radius: var(--admin-radius-input);
+  margin-top: 8px;
+  padding: 4px;
+}
+.admin-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.88rem;
+}
+.admin-checkbox-item:hover { background: var(--color-offwhite); }
+.admin-checkbox-item input[type="checkbox"] { flex-shrink: 0; }
 
 /* Mobile student cards (hidden on desktop) */
 .admin-siswa-cardlist { display: none; flex-direction: column; gap: 10px; }
