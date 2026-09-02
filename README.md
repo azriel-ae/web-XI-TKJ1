@@ -35,17 +35,15 @@ Setelah login, admin bisa:
 
 ### Wajib disiapkan kalau di-deploy ke Vercel
 
-Filesystem Vercel bersifat *read-only* & sementara saat runtime (tiap function bisa jalan di instance berbeda-beda), jadi akun admin, log aktivitas, override data/foto siswa, dan foto galeri yang ditambah lewat panel `/admin` **tidak akan tersimpan** tanpa penyimpanan permanen. Vercel KV yang dulu dipakai **sudah dihapus** — sekarang datanya disimpan permanen lewat **commit ke GitHub repo** (GitHub Contents API):
+Filesystem Vercel bersifat *read-only* & sementara saat runtime (tiap function bisa jalan di instance berbeda-beda), jadi akun admin, log aktivitas, override data/foto siswa, dan foto galeri yang ditambah lewat panel `/admin` **tidak akan tersimpan** tanpa penyimpanan permanen. Sekarang datanya disimpan permanen lewat **Vercel Blob** (public):
 
-1. Buat Personal Access Token di GitHub (Settings → Developer settings → Fine-grained tokens) dengan akses read+write "Contents" ke repo tujuan.
-2. Di Vercel Dashboard → **Settings → Environment Variables**, isi:
-   - `GITHUB_TOKEN` = token di atas
-   - `GITHUB_REPO` = `owner/nama-repo` (mis. `azriel-ae/web-XI-TKJ1`)
+1. Di Vercel Dashboard → project ini → tab **Storage** → **Create Database** → pilih **Blob** → connect ke project ini.
+2. Vercel otomatis menambahkan env var `BLOB_READ_WRITE_TOKEN` ke project (tidak perlu diisi manual).
 3. Redeploy project.
 
-> ⚠️ **Kalau repo yang dipakai untuk `GITHUB_REPO` bersifat PUBLIC**, semua data yang tersimpan lewat sini — termasuk password hash akun admin & log aktivitas — bisa dibaca siapa saja lewat github.com. Pastikan repo-nya **private**, atau pakai repo lain yang private khusus untuk penyimpanan data (boleh beda dari repo situs ini, cukup ganti `GITHUB_REPO`). Lihat `.env.example` dan komentar di `lib/kvStore.js` untuk detail.
+> ⚠️ Blob di sini dipakai dengan mode **public** — semua data yang tersimpan lewat sini, termasuk password hash akun admin & log aktivitas, tersimpan sebagai file public di Blob store project ini. Jangan bagikan URL Blob store ke orang lain. Lihat `.env.example` dan komentar di `lib/kvStore.js` untuk detail.
 
-Tanpa langkah ini, panel admin tetap bisa login, tapi semua perubahan (akun baru, upload foto, edit data siswa) akan hilang lagi begitu Vercel memindahkan request ke instance server lain — biasanya kelihatan sebagai "sudah ditambah tapi tidak muncul lagi". Panel admin akan menampilkan peringatan ke owner kalau penyimpanan GitHub belum tersambung.
+Tanpa langkah ini, panel admin tetap bisa login, tapi semua perubahan (akun baru, upload foto, edit data siswa) akan hilang lagi begitu Vercel memindahkan request ke instance server lain — biasanya kelihatan sebagai "sudah ditambah tapi tidak muncul lagi". Panel admin akan menampilkan peringatan ke owner kalau Blob belum tersambung.
 
 **Log aktivitas otomatis terhapus setelah 30 hari** (data akun admin TIDAK ikut terhapus, tetap permanen selamanya).
 
