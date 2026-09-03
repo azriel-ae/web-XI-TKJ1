@@ -41,8 +41,6 @@ Filesystem Vercel bersifat *read-only* & sementara saat runtime (tiap function b
 2. Vercel otomatis menambahkan env var `BLOB_READ_WRITE_TOKEN` ke project (tidak perlu diisi manual).
 3. Redeploy project.
 
-> ⚠️ Blob di sini dipakai dengan mode **public** — semua data yang tersimpan lewat sini, termasuk password hash akun admin & log aktivitas, tersimpan sebagai file public di Blob store project ini. Jangan bagikan URL Blob store ke orang lain. Lihat `.env.example` dan komentar di `lib/kvStore.js` untuk detail.
-
 Tanpa langkah ini, panel admin tetap bisa login, tapi semua perubahan (akun baru, upload foto, edit data siswa) akan hilang lagi begitu Vercel memindahkan request ke instance server lain — biasanya kelihatan sebagai "sudah ditambah tapi tidak muncul lagi". Panel admin akan menampilkan peringatan ke owner kalau Blob belum tersambung.
 
 **Log aktivitas otomatis terhapus setelah 30 hari** (data akun admin TIDAK ikut terhapus, tetap permanen selamanya).
