@@ -458,6 +458,25 @@
   <script src="assets/js/navbar.js" defer></script>
   <script src="assets/js/walikelas.js" defer></script>
   <!-- Spotify iFrame API resmi — dimuat lebih awal supaya siap dipakai saat kartu siswa dengan lagu favorit (mis. Azriel/Danish) diklik -->
+  <script>
+    // PENTING: callback ini WAJIB didefinisikan di sini (inline, sebelum tag
+    // <script async> Spotify di bawah), BUKAN di dalam assets/js/siswa.js.
+    // Skrip Spotify di bawah dimuat "async" (bisa selesai & langsung manggil
+    // callback ini kapan saja, bahkan sebelum HTML selesai di-parse),
+    // sedangkan siswa.js dimuat "defer" (baru jalan SETELAH HTML selesai
+    // di-parse). Kalau skrip Spotify-nya keburu selesai duluan sebelum
+    // siswa.js sempat jalan, dan callback ini didefinisikan di siswa.js,
+    // maka panggilan "sudah siap" dari Spotify itu hilang selamanya (API
+    // resminya cuma manggil sekali, tidak dicoba ulang) -> lagu jadi tidak
+    // pernah muncul sama sekali. Pola queue di bawah membuatnya aman
+    // terlepas dari urutan mana yang selesai duluan.
+    window.__spotifyIframeApiReadyQueue = [];
+    window.onSpotifyIframeApiReady = function (IFrameAPI) {
+      window.__spotifyIframeApiInstance = IFrameAPI;
+      window.__spotifyIframeApiReadyQueue.forEach(function (fn) { fn(IFrameAPI); });
+      window.__spotifyIframeApiReadyQueue = [];
+    };
+  </script>
   <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
   <script src="assets/js/siswa.js" defer></script>
   <script src="assets/js/gallery.js" defer></script>

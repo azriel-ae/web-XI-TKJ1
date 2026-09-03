@@ -10,9 +10,16 @@ const SPECIAL_STUDENT_SONGS = {
 };
 
 // --- Spotify iFrame API resmi: siap dipakai begitu skrip di index.html selesai dimuat ---
-let spotifyIframeApi = null;
+// Callback "onSpotifyIframeApiReady" DIDEFINISIKAN INLINE di index.html (bukan di
+// sini) supaya tidak kalah start dengan skrip async Spotify — lihat komentar di
+// index.html untuk detail. Di sini kita cukup ambil instance-nya kalau sudah
+// keburu siap duluan, atau ikut antre kalau belum.
+let spotifyIframeApi = window.__spotifyIframeApiInstance || null;
 let spotifyController = null;
-window.onSpotifyIframeApiReady = (IFrameAPI) => { spotifyIframeApi = IFrameAPI; };
+if (!spotifyIframeApi) {
+  window.__spotifyIframeApiReadyQueue = window.__spotifyIframeApiReadyQueue || [];
+  window.__spotifyIframeApiReadyQueue.push(IFrameAPI => { spotifyIframeApi = IFrameAPI; });
+}
 
 // Loncat ke detik tertentu begitu track baru benar-benar siap diputar
 // (menunggu event "playback_update" pertama supaya tidak seek sebelum
