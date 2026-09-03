@@ -1,8 +1,12 @@
 let studentData = [];
 
-// Lagu favorit khusus diputar suaranya saja (tanpa ditampilkan) hanya saat detail siswa Azriel dibuka.
+// Lagu favorit khusus diputar suaranya saja (tanpa ditampilkan) hanya saat
+// detail siswa tertentu dibuka. "startAt" (detik) opsional -> kalau diisi,
+// lagu langsung diputar mulai dari detik tersebut alih-alih dari awal.
 const SPECIAL_STUDENT_SONGS = {
-  "azriel aurizal ednisia": "spotify:track:6PqWdGIYq5xdLaa4zCZfRp"
+  "azriel aurizal ednisia": { uri: "spotify:track:6PqWdGIYq5xdLaa4zCZfRp" },
+  // Perfect - Ed Sheeran, diputar mulai menit 02:26 (146 detik) khusus untuk Danish.
+  "achmad danish zahi baiza": { uri: "spotify:track:0tgVpDi06FyKpA1z0VMD4v", startAt: 146 }
 };
 
 // --- Spotify iFrame API resmi: siap dipakai begitu skrip di index.html selesai dimuat ---
@@ -10,7 +14,27 @@ let spotifyIframeApi = null;
 let spotifyController = null;
 window.onSpotifyIframeApiReady = (IFrameAPI) => { spotifyIframeApi = IFrameAPI; };
 
-function playHiddenSong(spotifyUri) {
+// Loncat ke detik tertentu begitu track baru benar-benar siap diputar
+// (menunggu event "playback_update" pertama supaya tidak seek sebelum
+// track baru selesai di-load oleh player). Ada fallback timeout supaya
+// tetap jalan walau event playback_update tidak sesuai dugaan.
+function seekWhenReady(controller, startAt) {
+  if (!startAt) return;
+  let done = false;
+  const finish = () => {
+    if (done) return;
+    done = true;
+    controller.removeListener("playback_update", onUpdate);
+    controller.seek(startAt);
+  };
+  const onUpdate = event => {
+    if (event && event.data && event.data.isBuffering === false) finish();
+  };
+  controller.addListener("playback_update", onUpdate);
+  setTimeout(finish, 1500);
+}
+
+function playHiddenSong(spotifyUri, startAt) {
   const container = document.getElementById("modalLaguPlayer");
   if (!container) return;
 
@@ -18,13 +42,14 @@ function playHiddenSong(spotifyUri) {
   if (spotifyController) {
     spotifyController.loadUri(spotifyUri);
     spotifyController.play();
+    seekWhenReady(spotifyController, startAt);
     return;
   }
 
   // Belum ada controller: buat sekali, lalu putar saat sudah siap.
   if (!spotifyIframeApi) {
     // API resmi belum selesai dimuat (koneksi lambat) — coba lagi sesaat lagi.
-    setTimeout(() => playHiddenSong(spotifyUri), 300);
+    setTimeout(() => playHiddenSong(spotifyUri, startAt), 300);
     return;
   }
   spotifyIframeApi.createController(
@@ -32,7 +57,10 @@ function playHiddenSong(spotifyUri) {
     { uri: spotifyUri, width: 1, height: 1 },
     controller => {
       spotifyController = controller;
-      controller.addListener("ready", () => controller.play());
+      controller.addListener("ready", () => {
+        controller.play();
+        seekWhenReady(controller, startAt);
+      });
     }
   );
 }
@@ -91,9 +119,9 @@ function openStudentModal(student) {
     portofolioBtn.onclick = null;
   }
 
-  const laguSrc = SPECIAL_STUDENT_SONGS[student.nama.trim().toLowerCase()];
-  if (laguSrc) {
-    playHiddenSong(laguSrc);
+  const lagu = SPECIAL_STUDENT_SONGS[student.nama.trim().toLowerCase()];
+  if (lagu) {
+    playHiddenSong(lagu.uri, lagu.startAt);
   } else {
     stopHiddenSong();
   }

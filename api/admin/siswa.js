@@ -12,7 +12,7 @@
 
 const baseSiswa = require("../../data/siswa.json");
 const { getLoggedInAdminInfo, canEditSiswa } = require("../../lib/auth");
-const { readJson, writeJson, uploadImage } = require("../../lib/kvStore");
+const { readJson, writeJson, uploadImage, deleteImage } = require("../../lib/kvStore");
 const { decodeImagePayload, safeFileNamePart } = require("../../lib/http");
 const { logActivity } = require("../../lib/activityLog");
 
@@ -78,7 +78,17 @@ async function handleData(req, res, adminInfo) {
         updatedBy: admin,
         updatedAt: new Date().toISOString()
     };
-    await writeJson(DATA_OVERRIDES_KEY, overrides);
+    try {
+        await writeJson(DATA_OVERRIDES_KEY, overrides);
+    } catch (error) {
+        // PENTING: sebelumnya writeJson di sini tidak dibungkus try/catch,
+        // jadi kalau penyimpanan ke database (Blob) sempat gagal/timeout,
+        // function ini crash mentah (500 tanpa pesan jelas) padahal
+        // datanya sendiri sudah tervalidasi. Sekarang errornya ditangkap
+        // dan dikembalikan sebagai pesan yang jelas ke admin.
+        console.error("Simpan data siswa ke database gagal:", error);
+        return res.status(500).json({ error: "Gagal menyimpan perubahan ke database. Coba lagi." });
+    }
 
     await logActivity("siswa_edit", admin, `Ubah data siswa absen ${absen} (${nama}).`);
 
@@ -116,8 +126,28 @@ async function handleFoto(req, res, adminInfo) {
     }
 
     const overrides = await readJson(FOTO_OVERRIDES_KEY, {});
+    const previousFotoUrl = overrides[absen]; // foto hasil upload admin sebelumnya (kalau ada)
     overrides[absen] = fotoUrl;
-    await writeJson(FOTO_OVERRIDES_KEY, overrides);
+    try {
+        await writeJson(FOTO_OVERRIDES_KEY, overrides);
+    } catch (error) {
+        // Sama seperti di handleData: dulu tidak ada try/catch di sini, jadi
+        // kalau tulis ke database gagal setelah foto SUDAH terupload,
+        // function ini crash mentah dan foto baru jadi tidak ke-link ke
+        // siswa (padahal filenya sudah ada di storage) -> dari sisi admin
+        // kelihatannya "upload foto gagal". Sekarang errornya ditangani
+        // rapi + foto yang baru saja diupload tapi gagal disimpan itu
+        // langsung dihapus lagi supaya tidak jadi sampah di database.
+        console.error("Simpan foto siswa ke database gagal:", error);
+        await deleteImage(fotoUrl).catch(() => {});
+        return res.status(500).json({ error: "Foto sudah terupload tapi gagal disimpan ke database. Coba lagi." });
+    }
+
+    // Bersihkan foto hasil upload sebelumnya (kalau ada & berbeda) supaya
+    // tidak menumpuk file foto lama yang sudah tidak dipakai di database.
+    if (previousFotoUrl && previousFotoUrl !== fotoUrl) {
+        await deleteImage(previousFotoUrl).catch(() => {});
+    }
 
     await logActivity("siswa_foto_edit", admin, `Ubah foto siswa absen ${absen} (${student.nama}).`);
 
