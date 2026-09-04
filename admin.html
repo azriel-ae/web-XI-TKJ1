@@ -511,9 +511,10 @@
     <div class="admin-modal-backdrop" data-close-modal></div>
     <div class="admin-modal-content">
       <button type="button" class="admin-modal-close" data-close-modal aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button>
-      <h3>Edit Akun Admin</h3>
+      <h3 id="editAdminTitle">Edit Akun Admin</h3>
       <form id="editAdminForm" class="admin-form">
         <input type="hidden" id="editAdminOriginalUsername">
+        <p id="editAdminOwnerHint" class="admin-field-hint" hidden>Akun owner: username tidak bisa diubah, hanya password.</p>
         <div class="admin-field">
           <label for="editAdminUsername">Username</label>
           <input id="editAdminUsername" type="text" placeholder="Contoh: budi" autocomplete="off" required>

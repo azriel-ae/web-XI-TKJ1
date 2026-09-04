@@ -891,7 +891,11 @@
                 <button type="button" class="admin-btn admin-btn-ghost" data-edit-admin="${escapeHtml(a.username)}"><i class="fa-solid fa-pen"></i> Edit</button>
                 <button type="button" class="admin-btn admin-btn-ghost" data-delete-admin="${escapeHtml(a.username)}"><i class="fa-solid fa-trash"></i> Hapus</button>
               </div>`
-            : '<span class="admin-table-muted">—</span>'}
+            : (a.isOwner
+                ? `<div class="admin-table-actions">
+                    <button type="button" class="admin-btn admin-btn-ghost" data-edit-admin="${escapeHtml(a.username)}" data-owner-edit="true"><i class="fa-solid fa-key"></i> Ubah Password</button>
+                  </div>`
+                : '<span class="admin-table-muted">—</span>')}
         </td>
       </tr>`;
     }).join("");
@@ -903,7 +907,7 @@
 
     const editBtn = event.target.closest("[data-edit-admin]");
     if (editBtn) {
-      openEditAdminModal(editBtn.dataset.editAdmin);
+      openEditAdminModal(editBtn.dataset.editAdmin, editBtn.dataset.ownerEdit === "true");
       return;
     }
 
@@ -932,18 +936,34 @@
   const editAdminModal = document.getElementById("editAdminModal");
   bindModalClose(editAdminModal);
 
-  function openEditAdminModal(username) {
+  function openEditAdminModal(username, isOwnerEdit) {
     document.getElementById("editAdminForm").reset();
     setStatus(document.getElementById("editAdminStatus"), "", null);
     document.getElementById("editAdminOriginalUsername").value = username;
-    document.getElementById("editAdminUsername").value = username;
+
+    const usernameField = document.getElementById("editAdminUsername");
+    usernameField.value = username;
+    usernameField.disabled = !!isOwnerEdit;
+    usernameField.required = !isOwnerEdit;
+
+    const titleEl = document.getElementById("editAdminTitle");
+    const hintEl = document.getElementById("editAdminOwnerHint");
+    if (titleEl) titleEl.textContent = isOwnerEdit ? "Ubah Password Owner" : "Edit Akun Admin";
+    if (hintEl) hintEl.hidden = !isOwnerEdit;
+
+    editAdminModal.dataset.ownerEdit = isOwnerEdit ? "true" : "false";
     editAdminModal.classList.add("is-open");
     editAdminModal.setAttribute("aria-hidden", "false");
+    if (isOwnerEdit) document.getElementById("editAdminPassword").focus();
   }
 
   function closeEditAdminModal() {
     editAdminModal.classList.remove("is-open");
     editAdminModal.setAttribute("aria-hidden", "true");
+    const usernameField = document.getElementById("editAdminUsername");
+    usernameField.disabled = false;
+    usernameField.required = true;
+    editAdminModal.dataset.ownerEdit = "false";
   }
 
   document.getElementById("editAdminForm").addEventListener("submit", async event => {
@@ -952,17 +972,25 @@
     const statusEl = document.getElementById("editAdminStatus");
     setStatus(statusEl, "", null);
 
+    const isOwnerEdit = editAdminModal.dataset.ownerEdit === "true";
     const originalUsername = document.getElementById("editAdminOriginalUsername").value;
     const newUsername = document.getElementById("editAdminUsername").value.trim();
     const newPassword = document.getElementById("editAdminPassword").value;
 
-    if (!newUsername) {
-      setStatus(statusEl, "Username wajib diisi.", "error");
-      return;
-    }
-    if (newUsername === originalUsername && !newPassword) {
-      setStatus(statusEl, "Tidak ada perubahan. Ubah username atau isi password baru.", "error");
-      return;
+    if (isOwnerEdit) {
+      if (!newPassword) {
+        setStatus(statusEl, "Isi password baru untuk mengubah akun owner.", "error");
+        return;
+      }
+    } else {
+      if (!newUsername) {
+        setStatus(statusEl, "Username wajib diisi.", "error");
+        return;
+      }
+      if (newUsername === originalUsername && !newPassword) {
+        setStatus(statusEl, "Tidak ada perubahan. Ubah username atau isi password baru.", "error");
+        return;
+      }
     }
 
     toggleSpinner(button, true);
@@ -971,11 +999,11 @@
         method: "PATCH",
         body: JSON.stringify({
           username: originalUsername,
-          newUsername: newUsername !== originalUsername ? newUsername : undefined,
+          newUsername: (!isOwnerEdit && newUsername !== originalUsername) ? newUsername : undefined,
           newPassword: newPassword || undefined
         })
       });
-      showToast("Akun admin berhasil diubah.", "success");
+      showToast(isOwnerEdit ? "Password owner berhasil diubah." : "Akun admin berhasil diubah.", "success");
       loadAdmins();
       closeEditAdminModal();
     } catch (error) {

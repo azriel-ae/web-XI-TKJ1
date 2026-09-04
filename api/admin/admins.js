@@ -23,6 +23,12 @@ const {
     ROLES,
     normalizeAssignedAbsen
 } = require("../../lib/auth");
+// Catatan: updateAdminAccount otomatis mengarahkan ke jalur ganti-password
+// owner (lib/auth.js -> updateOwnerPassword) kalau body.username adalah
+// azriel/david. Endpoint ini sendiri sudah dikunci hanya untuk owner (lihat
+// pengecekan isOwnerUsername(admin) di bawah), jadi hanya azriel & david
+// yang bisa memicu perubahan password akun owner manapun (termasuk punya
+// akun sendiri).
 const { logActivity, getActivityLog } = require("../../lib/activityLog");
 const baseSiswa = require("../../data/siswa.json");
 
