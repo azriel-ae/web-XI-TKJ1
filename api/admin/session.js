@@ -3,7 +3,7 @@
 // Return status login admin saat ini (dibaca dari cookie sesi).
 // =========================
 
-const { getLoggedInAdminInfo, isOwnerUsername } = require("../../lib/auth");
+const { getLoggedInAdminInfo, isSuperAdminUsername } = require("../../lib/auth");
 const { isKvEnabled } = require("../../lib/kvStore");
 
 module.exports = async function handler(req, res) {
@@ -27,7 +27,7 @@ module.exports = async function handler(req, res) {
     return res.status(200).json({
         loggedIn: true,
         username: adminInfo.username,
-        isOwner: isOwnerUsername(adminInfo.username),
+        isSuperAdmin: isSuperAdminUsername(adminInfo.username),
         role: adminInfo.role,
         assignedAbsen: adminInfo.assignedAbsen,
         kvEnabled

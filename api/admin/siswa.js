@@ -57,7 +57,7 @@ async function handleData(req, res, adminInfo) {
     if (!student) return;
 
     // Akun ber-role siswa hanya boleh mengedit siswa yang sudah dipilihkan
-    // owner saat akun dibuat. Cek ini SELALU terhadap data sesi tepercaya
+    // super_admin saat akun dibuat. Cek ini SELALU terhadap data sesi tepercaya
     // (getLoggedInAdminInfo), tidak pernah terhadap apa pun dari body/frontend.
     if (!canEditSiswa(adminInfo, absen)) {
         return res.status(403).json({ error: "Anda tidak memiliki izin untuk mengedit data siswa ini." });

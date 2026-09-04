@@ -288,7 +288,7 @@
             <div class="admin-card-header admin-card-header-row">
               <div>
                 <h2>Log Aktivitas</h2>
-                <p class="admin-card-sub">Riwayat kegiatan di panel admin (login, logout, upload, ubah data). Hanya owner yang bisa melihat ini.</p>
+                <p class="admin-card-sub">Riwayat kegiatan di panel admin (login, logout, upload, ubah data). Hanya super_admin yang bisa melihat ini.</p>
               </div>
               <button type="button" class="admin-btn admin-btn-secondary" id="refreshLogBtn">
                 <i class="fa-solid fa-rotate-right"></i> Muat Ulang
@@ -506,7 +506,7 @@
       <h3 id="editAdminTitle">Edit Akun Admin</h3>
       <form id="editAdminForm" class="admin-form">
         <input type="hidden" id="editAdminOriginalUsername">
-        <p id="editAdminOwnerHint" class="admin-field-hint" hidden>Akun owner: username tidak bisa diubah, hanya password.</p>
+        <p id="editAdminSuperAdminHint" class="admin-field-hint" hidden>Akun super_admin: username tidak bisa diubah, hanya password.</p>
         <div class="admin-field">
           <label for="editAdminUsername">Username</label>
           <input id="editAdminUsername" type="text" placeholder="Contoh: budi" autocomplete="off" required>

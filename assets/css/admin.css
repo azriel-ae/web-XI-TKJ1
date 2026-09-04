@@ -770,7 +770,7 @@
   background: var(--color-light-gray);
   color: var(--color-gray);
 }
-.admin-badge-owner { background: var(--color-primary-soft-2); color: var(--color-lime-dark); }
+.admin-badge-super-admin { background: var(--color-primary-soft-2); color: var(--color-lime-dark); }
 .admin-badge-siswa { background: #e6f0ff; color: #2454b0; }
 
 /* Daftar checkbox pemilihan siswa (form tambah admin, role "siswa") */

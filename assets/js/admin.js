@@ -149,7 +149,7 @@
     galeri: { title: "Galeri", subtitle: "Tambahkan dan kelola foto galeri kelas." },
     siswa: { title: "Siswa", subtitle: "Cari dan ubah data atau pasfoto siswa." },
     admin: { title: "Manajemen Admin", subtitle: "Kelola akun yang memiliki akses ke panel admin." },
-    log: { title: "Log Aktivitas", subtitle: "Riwayat kegiatan di panel admin (khusus owner)." }
+    log: { title: "Log Aktivitas", subtitle: "Riwayat kegiatan di panel admin (khusus super_admin)." }
   };
 
   function openSidebar() {
@@ -190,7 +190,7 @@
     try {
       const data = await api("/api/admin/session");
       if (data.loggedIn) {
-        showDashboard(data.username, data.isOwner, data.role, data.assignedAbsen);
+        showDashboard(data.username, data.isSuperAdmin, data.role, data.assignedAbsen);
       } else {
         showLogin();
       }
@@ -204,24 +204,24 @@
     dashboardView.hidden = true;
   }
 
-  let currentIsOwner = false;
+  let currentIsSuperAdmin = false;
   let currentRole = "admin";
   let currentAssignedAbsen = [];
 
   const ROLE_LABELS = {
-    super_admin: "Super Admin (Owner)",
+    super_admin: "Super Admin",
     admin: "Admin",
     siswa: "Siswa"
   };
 
-  function showDashboard(username, isOwner, role, assignedAbsen) {
+  function showDashboard(username, isSuperAdmin, role, assignedAbsen) {
     loginView.hidden = true;
     dashboardView.hidden = false;
-    currentIsOwner = !!isOwner;
-    currentRole = role || (isOwner ? "super_admin" : "admin");
+    currentIsSuperAdmin = !!isSuperAdmin;
+    currentRole = role || (isSuperAdmin ? "super_admin" : "admin");
     currentAssignedAbsen = Array.isArray(assignedAbsen) ? assignedAbsen : [];
     document.getElementById("adminWhoami").innerHTML =
-      `<i class="fa-solid fa-circle-user"></i> ${escapeHtml(username)}${isOwner ? " (owner)" : ""}`;
+      `<i class="fa-solid fa-circle-user"></i> ${escapeHtml(username)}${isSuperAdmin ? " (super_admin)" : ""}`;
 
     goToPanel("dashboard");
     loadGalleryExtra();
@@ -232,7 +232,7 @@
     const statAdminCard = document.getElementById("statAdminCard");
     const navLogItem = document.getElementById("navLogItem");
     const shortcutLog = document.getElementById("shortcutLog");
-    if (isOwner) {
+    if (isSuperAdmin) {
       navAdminItem.hidden = false;
       shortcutAdmin.hidden = false;
       statAdminCard.hidden = false;
@@ -264,7 +264,7 @@
         method: "POST",
         body: JSON.stringify({ username, password })
       });
-      showDashboard(data.username, data.isOwner, data.role, data.assignedAbsen);
+      showDashboard(data.username, data.isSuperAdmin, data.role, data.assignedAbsen);
     } catch (error) {
       errorEl.textContent = error.message;
       errorEl.hidden = false;
@@ -383,7 +383,7 @@
               <span class="admin-gallery-item-title">${escapeHtml(item.judul) || "Tanpa judul"}</span>
               ${item.uploadedBy ? `<span class="admin-gallery-item-uploader">${escapeHtml(item.uploadedBy)}</span>` : ""}
             </div>
-            ${currentIsOwner ? `
+            ${currentIsSuperAdmin ? `
             <button type="button" class="admin-btn-icon-danger" data-delete-id="${item.id}" aria-label="Hapus foto">
               <i class="fa-solid fa-trash"></i>
             </button>` : ""}
@@ -450,8 +450,8 @@
   }
 
   // Akun ber-role "siswa" cuma boleh mengedit siswa yang sudah dipilihkan
-  // owner saat akun dibuat -> di panel "Siswa", tampilkan HANYA siswa itu
-  // (bukan seluruh daftar), supaya jelas ruang lingkupnya. Role admin/owner
+  // super_admin saat akun dibuat -> di panel "Siswa", tampilkan HANYA siswa itu
+  // (bukan seluruh daftar), supaya jelas ruang lingkupnya. Role admin/super_admin
   // tetap melihat & bisa mengedit seluruh daftar siswa seperti biasa.
   function getVisibleSiswa() {
     if (currentRole !== "siswa") return allSiswa;
@@ -792,7 +792,7 @@
     }
   });
 
-  // ---------- kelola akun admin (khusus owner) ----------
+  // ---------- kelola akun admin (khusus super_admin) ----------
   const createAdminModal = document.getElementById("createAdminModal");
   bindModalClose(createAdminModal);
 
@@ -866,8 +866,8 @@
       tableBody.innerHTML = '<tr><td colspan="3"><p class="empty-state">Belum ada data admin</p></td></tr>';
       return;
     }
-    const roleBadgeClass = { super_admin: "admin-badge-owner", admin: "", siswa: "admin-badge-siswa" };
-    const roleLabel = { super_admin: "Owner", admin: "Admin", siswa: "Siswa" };
+    const roleBadgeClass = { super_admin: "admin-badge-super-admin", admin: "", siswa: "admin-badge-siswa" };
+    const roleLabel = { super_admin: "super_admin", admin: "Admin", siswa: "Siswa" };
     tableBody.innerHTML = admins.map(a => {
       const assignedNames = (a.assignedAbsen || [])
         .map(absen => {
@@ -889,9 +889,9 @@
                 <button type="button" class="admin-btn admin-btn-ghost" data-edit-admin="${escapeHtml(a.username)}"><i class="fa-solid fa-pen"></i> Edit</button>
                 <button type="button" class="admin-btn admin-btn-ghost" data-delete-admin="${escapeHtml(a.username)}"><i class="fa-solid fa-trash"></i> Hapus</button>
               </div>`
-            : (a.isOwner
+            : (a.isSuperAdmin
                 ? `<div class="admin-table-actions">
-                    <button type="button" class="admin-btn admin-btn-ghost" data-edit-admin="${escapeHtml(a.username)}" data-owner-edit="true"><i class="fa-solid fa-key"></i> Ubah Password</button>
+                    <button type="button" class="admin-btn admin-btn-ghost" data-edit-admin="${escapeHtml(a.username)}" data-super-admin-edit="true"><i class="fa-solid fa-key"></i> Ubah Password</button>
                   </div>`
                 : '<span class="admin-table-muted">—</span>')}
         </td>
@@ -905,7 +905,7 @@
 
     const editBtn = event.target.closest("[data-edit-admin]");
     if (editBtn) {
-      openEditAdminModal(editBtn.dataset.editAdmin, editBtn.dataset.ownerEdit === "true");
+      openEditAdminModal(editBtn.dataset.editAdmin, editBtn.dataset.superAdminEdit === "true");
       return;
     }
 
@@ -930,29 +930,29 @@
     }
   });
 
-  // ---------- edit akun admin (username/password) - khusus owner ----------
+  // ---------- edit akun admin (username/password) - khusus super_admin ----------
   const editAdminModal = document.getElementById("editAdminModal");
   bindModalClose(editAdminModal);
 
-  function openEditAdminModal(username, isOwnerEdit) {
+  function openEditAdminModal(username, isSuperAdminEdit) {
     document.getElementById("editAdminForm").reset();
     setStatus(document.getElementById("editAdminStatus"), "", null);
     document.getElementById("editAdminOriginalUsername").value = username;
 
     const usernameField = document.getElementById("editAdminUsername");
     usernameField.value = username;
-    usernameField.disabled = !!isOwnerEdit;
-    usernameField.required = !isOwnerEdit;
+    usernameField.disabled = !!isSuperAdminEdit;
+    usernameField.required = !isSuperAdminEdit;
 
     const titleEl = document.getElementById("editAdminTitle");
-    const hintEl = document.getElementById("editAdminOwnerHint");
-    if (titleEl) titleEl.textContent = isOwnerEdit ? "Ubah Password Owner" : "Edit Akun Admin";
-    if (hintEl) hintEl.hidden = !isOwnerEdit;
+    const hintEl = document.getElementById("editAdminSuperAdminHint");
+    if (titleEl) titleEl.textContent = isSuperAdminEdit ? "Ubah Password super_admin" : "Edit Akun Admin";
+    if (hintEl) hintEl.hidden = !isSuperAdminEdit;
 
-    editAdminModal.dataset.ownerEdit = isOwnerEdit ? "true" : "false";
+    editAdminModal.dataset.superAdminEdit = isSuperAdminEdit ? "true" : "false";
     editAdminModal.classList.add("is-open");
     editAdminModal.setAttribute("aria-hidden", "false");
-    if (isOwnerEdit) document.getElementById("editAdminPassword").focus();
+    if (isSuperAdminEdit) document.getElementById("editAdminPassword").focus();
   }
 
   function closeEditAdminModal() {
@@ -961,7 +961,7 @@
     const usernameField = document.getElementById("editAdminUsername");
     usernameField.disabled = false;
     usernameField.required = true;
-    editAdminModal.dataset.ownerEdit = "false";
+    editAdminModal.dataset.superAdminEdit = "false";
   }
 
   document.getElementById("editAdminForm").addEventListener("submit", async event => {
@@ -970,14 +970,14 @@
     const statusEl = document.getElementById("editAdminStatus");
     setStatus(statusEl, "", null);
 
-    const isOwnerEdit = editAdminModal.dataset.ownerEdit === "true";
+    const isSuperAdminEdit = editAdminModal.dataset.superAdminEdit === "true";
     const originalUsername = document.getElementById("editAdminOriginalUsername").value;
     const newUsername = document.getElementById("editAdminUsername").value.trim();
     const newPassword = document.getElementById("editAdminPassword").value;
 
-    if (isOwnerEdit) {
+    if (isSuperAdminEdit) {
       if (!newPassword) {
-        setStatus(statusEl, "Isi password baru untuk mengubah akun owner.", "error");
+        setStatus(statusEl, "Isi password baru untuk mengubah akun super_admin.", "error");
         return;
       }
     } else {
@@ -997,11 +997,11 @@
         method: "PATCH",
         body: JSON.stringify({
           username: originalUsername,
-          newUsername: (!isOwnerEdit && newUsername !== originalUsername) ? newUsername : undefined,
+          newUsername: (!isSuperAdminEdit && newUsername !== originalUsername) ? newUsername : undefined,
           newPassword: newPassword || undefined
         })
       });
-      showToast(isOwnerEdit ? "Password owner berhasil diubah." : "Akun admin berhasil diubah.", "success");
+      showToast(isSuperAdminEdit ? "Password super_admin berhasil diubah." : "Akun admin berhasil diubah.", "success");
       loadAdmins();
       closeEditAdminModal();
     } catch (error) {
@@ -1057,7 +1057,7 @@
     }
   });
 
-  // ---------- log aktivitas (khusus owner) ----------
+  // ---------- log aktivitas (khusus super_admin) ----------
   const ACTIVITY_LABELS = {
     login: "Login",
     login_gagal: "Login gagal",

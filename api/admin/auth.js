@@ -17,7 +17,7 @@ const {
     createSessionToken,
     buildSessionCookie,
     buildClearSessionCookie,
-    isOwnerUsername,
+    isSuperAdminUsername,
     getAdminInfoByUsername,
     getLoggedInAdmin
 } = require("../../lib/auth");
@@ -59,7 +59,7 @@ async function handleLogin(req, res) {
     return res.status(200).json({
         ok: true,
         username: validUsername,
-        isOwner: isOwnerUsername(validUsername),
+        isSuperAdmin: isSuperAdminUsername(validUsername),
         role: info.role,
         assignedAbsen: info.assignedAbsen
     });

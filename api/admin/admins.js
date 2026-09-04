@@ -1,5 +1,5 @@
 // =========================
-// API: /api/admin/admins (khusus owner: azriel & david)
+// API: /api/admin/admins (khusus super_admin: azriel & david)
 // GET    -> daftar akun admin (tanpa password)
 //           GET ?resource=activity-log -> daftar log aktivitas panel admin
 // POST   -> buat akun admin baru (body: { username, password })
@@ -15,7 +15,7 @@
 
 const {
     getLoggedInAdmin,
-    isOwnerUsername,
+    isSuperAdminUsername,
     listAdminAccounts,
     createAdminAccount,
     deleteAdminAccount,
@@ -24,10 +24,10 @@ const {
     normalizeAssignedAbsen
 } = require("../../lib/auth");
 // Catatan: updateAdminAccount otomatis mengarahkan ke jalur ganti-password
-// owner (lib/auth.js -> updateOwnerPassword) kalau body.username adalah
-// azriel/david. Endpoint ini sendiri sudah dikunci hanya untuk owner (lihat
-// pengecekan isOwnerUsername(admin) di bawah), jadi hanya azriel & david
-// yang bisa memicu perubahan password akun owner manapun (termasuk punya
+// super_admin (lib/auth.js -> updateSuperAdminPassword) kalau body.username adalah
+// azriel/david. Endpoint ini sendiri sudah dikunci hanya untuk super_admin (lihat
+// pengecekan isSuperAdminUsername(admin) di bawah), jadi hanya azriel & david
+// yang bisa memicu perubahan password akun super_admin manapun (termasuk punya
 // akun sendiri).
 const { logActivity, getActivityLog } = require("../../lib/activityLog");
 const baseSiswa = require("../../data/siswa.json");
@@ -51,7 +51,7 @@ module.exports = async function handler(req, res) {
         return res.status(401).json({ error: "Silakan login sebagai admin terlebih dahulu." });
     }
 
-    if (!isOwnerUsername(admin)) {
+    if (!isSuperAdminUsername(admin)) {
         return res.status(403).json({ error: "Hanya azriel dan david yang bisa mengelola akun admin." });
     }
 
@@ -113,7 +113,7 @@ module.exports = async function handler(req, res) {
 
     // PATCH -> ubah username dan/atau password akun admin tambahan yang
     // sudah ada (body: { username, newUsername?, newPassword? }). Dipakai
-    // owner (azriel/david) buat edit akun admin/siswa yang dibuat lewat
+    // super_admin (azriel/david) buat edit akun admin/siswa yang dibuat lewat
     // panel — baik akun yang sudah ada sekarang maupun yang dibuat nanti.
     if (req.method === "PATCH") {
         const body = req.body || {};

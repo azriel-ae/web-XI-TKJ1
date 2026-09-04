@@ -41,7 +41,7 @@ Filesystem Vercel bersifat *read-only* & sementara saat runtime (tiap function b
 2. Vercel otomatis menambahkan env var `BLOB_READ_WRITE_TOKEN` ke project (tidak perlu diisi manual).
 3. Redeploy project.
 
-Tanpa langkah ini, panel admin tetap bisa login, tapi semua perubahan (akun baru, upload foto, edit data siswa) akan hilang lagi begitu Vercel memindahkan request ke instance server lain — biasanya kelihatan sebagai "sudah ditambah tapi tidak muncul lagi". Panel admin akan menampilkan peringatan ke owner kalau Blob belum tersambung.
+Tanpa langkah ini, panel admin tetap bisa login, tapi semua perubahan (akun baru, upload foto, edit data siswa) akan hilang lagi begitu Vercel memindahkan request ke instance server lain — biasanya kelihatan sebagai "sudah ditambah tapi tidak muncul lagi". Panel admin akan menampilkan peringatan ke super_admin kalau Blob belum tersambung.
 
 **Log aktivitas otomatis terhapus setelah 30 hari** (data akun admin TIDAK ikut terhapus, tetap permanen selamanya).
 
