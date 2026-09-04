@@ -3,77 +3,99 @@ let studentData = [];
 // Lagu favorit khusus diputar suaranya saja (tanpa ditampilkan) hanya saat
 // detail siswa tertentu dibuka. "startAt" (detik) opsional -> kalau diisi,
 // lagu langsung diputar mulai dari detik tersebut alih-alih dari awal.
+// videoId = ID video YouTube (bagian setelah "v=" di URL youtube.com/watch?v=...
+// atau bagian akhir URL youtu.be/...).
 const SPECIAL_STUDENT_SONGS = {
-  "azriel aurizal ednisia": { uri: "spotify:track:6PqWdGIYq5xdLaa4zCZfRp" },
-  // Perfect - Ed Sheeran, diputar mulai menit 02:26 (146 detik) khusus untuk Danish.
-  "achmad danish zahi baiza": { uri: "spotify:track:0tgVpDi06FyKpA1z0VMD4v", startAt: 146 }
+  // TODO: ganti "GANTI_DENGAN_VIDEO_ID_YOUTUBE" dengan ID video YouTube yang
+  // benar untuk lagu favorit Azriel (sebelumnya memakai Spotify track
+  // 6PqWdGIYq5xdLaa4zCZfRp — judul lagunya tidak bisa dipastikan lewat cara
+  // yang legal/resmi, jadi silakan isi manual dengan link YouTube yang sesuai).
+  "azriel aurizal ednisia": { videoId: "GANTI_DENGAN_VIDEO_ID_YOUTUBE" },
+  // Perfect - Ed Sheeran (Official Music Video), diputar mulai menit 02:26
+  // (146 detik) khusus untuk Danish.
+  "achmad danish zahi baiza": { videoId: "2Vv-BfVoq4g", startAt: 146 }
 };
 
-// --- Spotify iFrame API resmi: siap dipakai begitu skrip di index.html selesai dimuat ---
-// Callback "onSpotifyIframeApiReady" DIDEFINISIKAN INLINE di index.html (bukan di
-// sini) supaya tidak kalah start dengan skrip async Spotify — lihat komentar di
-// index.html untuk detail. Di sini kita cukup ambil instance-nya kalau sudah
+// --- YouTube IFrame Player API resmi: siap dipakai begitu skrip di index.html
+// selesai dimuat. Resmi dari Google/YouTube — TIDAK butuh akun/login YouTube
+// untuk memutar video publik, dan tidak memakai scraping/endpoint tidak resmi. ---
+// Callback "onYouTubeIframeAPIReady" DIDEFINISIKAN INLINE di index.html (bukan
+// di sini) supaya tidak kalah start dengan skrip async YouTube — lihat
+// komentar di index.html untuk detail. Di sini kita cukup cek apakah sudah
 // keburu siap duluan, atau ikut antre kalau belum.
-let spotifyIframeApi = window.__spotifyIframeApiInstance || null;
-let spotifyController = null;
-if (!spotifyIframeApi) {
-  window.__spotifyIframeApiReadyQueue = window.__spotifyIframeApiReadyQueue || [];
-  window.__spotifyIframeApiReadyQueue.push(IFrameAPI => { spotifyIframeApi = IFrameAPI; });
+let youtubeApiReady = Boolean(window.__youtubeApiReady);
+let youtubePlayer = null;
+if (!youtubeApiReady) {
+  window.__youtubeApiReadyQueue = window.__youtubeApiReadyQueue || [];
+  window.__youtubeApiReadyQueue.push(() => { youtubeApiReady = true; });
 }
 
-// Loncat ke detik tertentu begitu track baru benar-benar siap diputar
-// (menunggu event "playback_update" pertama supaya tidak seek sebelum
-// track baru selesai di-load oleh player). Ada fallback timeout supaya
-// tetap jalan walau event playback_update tidak sesuai dugaan.
-function seekWhenReady(controller, startAt) {
-  if (!startAt) return;
-  let done = false;
-  const finish = () => {
-    if (done) return;
-    done = true;
-    controller.removeListener("playback_update", onUpdate);
-    controller.seek(startAt);
-  };
-  const onUpdate = event => {
-    if (event && event.data && event.data.isBuffering === false) finish();
-  };
-  controller.addListener("playback_update", onUpdate);
-  setTimeout(finish, 1500);
+// Bungkus pemanggilan API player dengan try/catch supaya kalau autoplay
+// ditolak browser (mis. kebijakan autoplay yang berubah, tab di-throttle,
+// dsb), kegagalannya tertangan diam-diam tanpa melempar error ke halaman dan
+// TANPA mengubah UI jadi tombol Play — sesuai permintaan.
+function safePlayerCall(fn) {
+  try { fn(); } catch (error) { console.warn("Pemutaran lagu gagal (diabaikan secara graceful):", error); }
 }
 
-function playHiddenSong(spotifyUri, startAt) {
+function playHiddenSong(videoId, startAt) {
+  // "container" (wrapper luar, class "visually-hidden-audio") sengaja
+  // dibiarkan tetap ada di DOM apa pun yang terjadi — yang dipakai/diganti
+  // oleh YouTube IFrame API adalah "mount" (elemen dalam) supaya
+  // penyembunyian visualnya tidak pernah hilang walau YouTube mengganti
+  // elemen tersebut dengan <iframe> miliknya sendiri.
   const container = document.getElementById("modalLaguPlayer");
-  if (!container) return;
+  const mount = document.getElementById("modalLaguPlayerMount");
+  if (!container || !mount) return;
 
-  // Controller sudah pernah dibuat sebelumnya -> tinggal load track baru & putar dari awal.
-  if (spotifyController) {
-    spotifyController.loadUri(spotifyUri);
-    spotifyController.play();
-    seekWhenReady(spotifyController, startAt);
+  // Player sudah pernah dibuat sebelumnya -> tinggal load video baru & putar
+  // dari detik yang diminta (loadVideoById otomatis memutar). Ini juga yang
+  // memastikan hanya SATU instance/audio yang aktif: player yang sama
+  // dipakai ulang (bukan membuat player/iframe baru setiap kali siswa
+  // berganti), jadi tidak ada audio yang bertumpuk atau listener yang
+  // terpasang dobel.
+  if (youtubePlayer) {
+    safePlayerCall(() => {
+      youtubePlayer.loadVideoById({ videoId, startSeconds: startAt || 0 });
+      youtubePlayer.playVideo();
+    });
     return;
   }
 
-  // Belum ada controller: buat sekali, lalu putar saat sudah siap.
-  if (!spotifyIframeApi) {
+  // Belum ada player: buat sekali (langsung dengan video & detik yang
+  // diminta), lalu pastikan mulai diputar saat sudah siap.
+  if (!youtubeApiReady || typeof YT === "undefined" || !YT.Player) {
     // API resmi belum selesai dimuat (koneksi lambat) — coba lagi sesaat lagi.
-    setTimeout(() => playHiddenSong(spotifyUri, startAt), 300);
+    setTimeout(() => playHiddenSong(videoId, startAt), 300);
     return;
   }
-  spotifyIframeApi.createController(
-    container,
-    { uri: spotifyUri, width: 1, height: 1 },
-    controller => {
-      spotifyController = controller;
-      controller.addListener("ready", () => {
-        controller.play();
-        seekWhenReady(controller, startAt);
-      });
+  youtubePlayer = new YT.Player(mount, {
+    width: "1",
+    height: "1",
+    videoId,
+    playerVars: {
+      autoplay: 1,
+      start: startAt || 0,
+      controls: 0,
+      disablekb: 1,
+      modestbranding: 1,
+      rel: 0,
+      playsinline: 1,
+      origin: window.location.origin
+    },
+    events: {
+      onReady: event => safePlayerCall(() => event.target.playVideo()),
+      // Kalau videoId salah/tidak valid (mis. placeholder yang belum diganti
+      // admin) atau video tidak bisa diputar (privat/dihapus/dibatasi
+      // region), tangani diam-diam tanpa mengganggu halaman — TIDAK
+      // memunculkan tombol Play atau pesan error apa pun ke pengunjung.
+      onError: error => console.warn("YouTube player error (diabaikan secara graceful):", error && error.data)
     }
-  );
+  });
 }
 
 function stopHiddenSong() {
-  if (spotifyController) spotifyController.pause();
+  if (youtubePlayer) safePlayerCall(() => youtubePlayer.pauseVideo());
 }
 
 function initials(name) {
@@ -126,9 +148,27 @@ function openStudentModal(student) {
     portofolioBtn.onclick = null;
   }
 
+  // Background khusus Detail Siswa (diatur admin lewat Admin Panel). Ini
+  // HANYA mengubah tampilan di dalam modal Detail Siswa (elemen
+  // ".student-modal-body" di bawah), tidak pernah menyentuh Homepage,
+  // Daftar Siswa, Dashboard, Navbar, Footer, halaman Admin, atau tema
+  // global manapun. Kalau siswa tidak punya background custom (bgDetail
+  // kosong/null), style-nya dibersihkan supaya kembali ke tampilan
+  // default biasa.
+  const modalContent = document.querySelector("#siswaModal .student-modal");
+  if (modalContent) {
+    if (student.bgDetail) {
+      modalContent.classList.add("has-student-bg");
+      modalContent.style.setProperty("--student-bg-image", `url("${student.bgDetail}")`);
+    } else {
+      modalContent.classList.remove("has-student-bg");
+      modalContent.style.removeProperty("--student-bg-image");
+    }
+  }
+
   const lagu = SPECIAL_STUDENT_SONGS[student.nama.trim().toLowerCase()];
   if (lagu) {
-    playHiddenSong(lagu.uri, lagu.startAt);
+    playHiddenSong(lagu.videoId, lagu.startAt);
   } else {
     stopHiddenSong();
   }

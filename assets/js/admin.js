@@ -482,6 +482,7 @@
           <div class="admin-table-actions">
             <button type="button" class="admin-btn admin-btn-ghost" data-edit-absen="${s.absen}"><i class="fa-solid fa-camera"></i> Foto</button>
             <button type="button" class="admin-btn admin-btn-ghost" data-edit-data-absen="${s.absen}"><i class="fa-solid fa-pen"></i> Data</button>
+            <button type="button" class="admin-btn admin-btn-ghost" data-edit-bg-absen="${s.absen}"><i class="fa-solid fa-image"></i> Background</button>
           </div>
         </td>
       </tr>`).join("");
@@ -496,6 +497,7 @@
         <div class="admin-siswa-card-actions">
           <button type="button" class="admin-btn-icon-danger" style="color:var(--color-charcoal)" data-edit-absen="${s.absen}" aria-label="Ubah foto"><i class="fa-solid fa-camera"></i></button>
           <button type="button" class="admin-btn-icon-danger" style="color:var(--color-charcoal)" data-edit-data-absen="${s.absen}" aria-label="Ubah data"><i class="fa-solid fa-pen"></i></button>
+          <button type="button" class="admin-btn-icon-danger" style="color:var(--color-charcoal)" data-edit-bg-absen="${s.absen}" aria-label="Ubah background Detail Siswa"><i class="fa-solid fa-image"></i></button>
         </div>
       </div>`).join("");
   }
@@ -518,6 +520,11 @@
       const dataBtn = event.target.closest("[data-edit-data-absen]");
       if (dataBtn) {
         openSiswaDataModal(Number(dataBtn.dataset.editDataAbsen));
+        return;
+      }
+      const bgBtn = event.target.closest("[data-edit-bg-absen]");
+      if (bgBtn) {
+        openSiswaBackgroundModal(Number(bgBtn.dataset.editBgAbsen));
       }
     });
   }
@@ -665,6 +672,125 @@
       setStatus(statusEl, error.message, "error");
     } finally {
       toggleSpinner(button, false);
+    }
+  });
+
+  // ---------- modal background Detail Siswa ----------
+  // Background di sini HANYA memengaruhi tampilan halaman Detail Siswa
+  // untuk siswa yang dipilih (lihat assets/js/siswa.js + assets/css/siswa.css),
+  // tidak pernah mengubah Homepage/Daftar Siswa/Dashboard/halaman lain.
+  const siswaBackgroundModal = document.getElementById("siswaBackgroundModal");
+  const siswaBackgroundInput = document.getElementById("siswaBackgroundInput");
+  const siswaBackgroundPreviewWrap = document.getElementById("siswaBackgroundPreviewWrap");
+  const siswaBackgroundPreviewImg = document.getElementById("siswaBackgroundPreviewImg");
+  const siswaBackgroundUploadPlaceholder = document.getElementById("siswaBackgroundUploadPlaceholder");
+  const siswaBackgroundCurrentImg = document.getElementById("siswaBackgroundCurrentImg");
+  const siswaBackgroundCurrentDefault = document.getElementById("siswaBackgroundCurrentDefault");
+  bindModalClose(siswaBackgroundModal);
+
+  function setSiswaBackgroundPreview(file) {
+    if (!file) {
+      siswaBackgroundPreviewWrap.hidden = true;
+      siswaBackgroundUploadPlaceholder.hidden = false;
+      siswaBackgroundInput.hidden = false;
+      return;
+    }
+    siswaBackgroundPreviewImg.src = URL.createObjectURL(file);
+    document.getElementById("siswaBackgroundFileName").textContent = file.name;
+    document.getElementById("siswaBackgroundFileSize").textContent = formatFileSize(file.size);
+    siswaBackgroundPreviewWrap.hidden = false;
+    siswaBackgroundUploadPlaceholder.hidden = true;
+    siswaBackgroundInput.hidden = true;
+  }
+
+  function renderSiswaBackgroundCurrent(student) {
+    if (student.bgDetail) {
+      siswaBackgroundCurrentImg.src = student.bgDetail;
+      siswaBackgroundCurrentImg.hidden = false;
+      siswaBackgroundCurrentDefault.hidden = true;
+    } else {
+      siswaBackgroundCurrentImg.hidden = true;
+      siswaBackgroundCurrentImg.src = "";
+      siswaBackgroundCurrentDefault.hidden = false;
+    }
+  }
+
+  function openSiswaBackgroundModal(absen) {
+    const student = allSiswa.find(s => s.absen === absen);
+    if (!student) return;
+    document.getElementById("siswaBackgroundAbsen").value = absen;
+    document.getElementById("siswaBackgroundModalTitle").textContent = `Background Detail Siswa — ${student.nama}`;
+    renderSiswaBackgroundCurrent(student);
+    document.getElementById("siswaBackgroundForm").reset();
+    setSiswaBackgroundPreview(null);
+    setStatus(document.getElementById("siswaBackgroundStatus"), "", null);
+    siswaBackgroundModal.classList.add("is-open");
+    siswaBackgroundModal.setAttribute("aria-hidden", "false");
+  }
+
+  function closeSiswaBackgroundModal() {
+    siswaBackgroundModal.classList.remove("is-open");
+    siswaBackgroundModal.setAttribute("aria-hidden", "true");
+  }
+
+  siswaBackgroundInput.addEventListener("change", () => setSiswaBackgroundPreview(siswaBackgroundInput.files[0]));
+  document.getElementById("siswaBackgroundRemoveFile").addEventListener("click", () => {
+    siswaBackgroundInput.value = "";
+    setSiswaBackgroundPreview(null);
+  });
+
+  document.getElementById("siswaBackgroundForm").addEventListener("submit", async event => {
+    event.preventDefault();
+    const button = document.getElementById("siswaBackgroundSubmit");
+    const statusEl = document.getElementById("siswaBackgroundStatus");
+    setStatus(statusEl, "", null);
+
+    const file = siswaBackgroundInput.files[0];
+    if (!file) {
+      setStatus(statusEl, "Pilih background terlebih dahulu.", "error");
+      return;
+    }
+
+    toggleSpinner(button, true);
+    try {
+      const background = await fileToPayload(file);
+      const absen = Number(document.getElementById("siswaBackgroundAbsen").value);
+      await api("/api/admin/siswa?action=background", {
+        method: "POST",
+        body: JSON.stringify({ absen, background })
+      });
+      showToast("Background Detail Siswa berhasil diperbarui.", "success");
+      await loadSiswaAdmin();
+      closeSiswaBackgroundModal();
+    } catch (error) {
+      setStatus(statusEl, error.message, "error");
+    } finally {
+      toggleSpinner(button, false);
+    }
+  });
+
+  document.getElementById("siswaBackgroundResetBtn").addEventListener("click", async () => {
+    const resetBtn = document.getElementById("siswaBackgroundResetBtn");
+    const statusEl = document.getElementById("siswaBackgroundStatus");
+    const absen = Number(document.getElementById("siswaBackgroundAbsen").value);
+
+    setStatus(statusEl, "", null);
+    resetBtn.disabled = true;
+    try {
+      await api("/api/admin/siswa?action=background", {
+        method: "POST",
+        body: JSON.stringify({ absen, reset: true })
+      });
+      showToast("Background Detail Siswa dikembalikan ke default.", "success");
+      await loadSiswaAdmin();
+      const student = allSiswa.find(s => s.absen === absen);
+      if (student) renderSiswaBackgroundCurrent(student);
+      siswaBackgroundInput.value = "";
+      setSiswaBackgroundPreview(null);
+    } catch (error) {
+      setStatus(statusEl, error.message, "error");
+    } finally {
+      resetBtn.disabled = false;
     }
   });
 

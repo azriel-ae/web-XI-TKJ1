@@ -74,6 +74,30 @@
 
 .student-modal-body { padding: 56px 26px 26px; }
 
+/* Background khusus Detail Siswa (diatur lewat Admin Panel), SENGAJA
+   di-scope hanya ke ".student-modal-body" di dalam modal Detail Siswa
+   ini saja lewat ".has-student-bg" + variabel CSS "--student-bg-image"
+   yang diisi per-siswa oleh assets/js/siswa.js. Tidak ada perubahan di
+   selector lain manapun, jadi Homepage/Daftar Siswa/Dashboard/Navbar/
+   Footer/halaman lain/tema global tidak terpengaruh sama sekali. */
+.student-modal.has-student-bg .student-modal-body {
+  position: relative;
+  background-image: var(--student-bg-image);
+  background-size: cover;
+  background-position: center;
+}
+.student-modal.has-student-bg .student-modal-body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, .86);
+  z-index: 0;
+}
+.student-modal.has-student-bg .student-modal-body > * {
+  position: relative;
+  z-index: 1;
+}
+
 .student-modal-name {
   font-family: var(--font-main);
   font-weight: 700;

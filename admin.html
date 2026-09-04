@@ -411,6 +411,57 @@
     </div>
   </div>
 
+  <!-- Modal: ubah background Detail Siswa (khusus tampilan halaman Detail Siswa siswa terkait, tidak memengaruhi halaman lain) -->
+  <div id="siswaBackgroundModal" class="admin-modal" aria-hidden="true">
+    <div class="admin-modal-backdrop" data-close-modal></div>
+    <div class="admin-modal-content">
+      <button type="button" class="admin-modal-close" data-close-modal aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button>
+      <h3 id="siswaBackgroundModalTitle">Background Detail Siswa</h3>
+      <p class="admin-card-sub">Background ini hanya tampil di halaman Detail Siswa yang dipilih, tidak memengaruhi halaman lain.</p>
+      <form id="siswaBackgroundForm" class="admin-form">
+        <input type="hidden" id="siswaBackgroundAbsen">
+
+        <div class="admin-field">
+          <label>Background Saat Ini</label>
+          <div class="admin-current-photo">
+            <img id="siswaBackgroundCurrentImg" alt="Background saat ini" hidden>
+            <span id="siswaBackgroundCurrentDefault" class="admin-table-muted">Default (belum ada background khusus)</span>
+          </div>
+        </div>
+
+        <div class="admin-field">
+          <label for="siswaBackgroundInput">Ganti Background</label>
+          <div class="admin-upload-area" id="siswaBackgroundUploadArea">
+            <input id="siswaBackgroundInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
+            <div class="admin-upload-placeholder" id="siswaBackgroundUploadPlaceholder">
+              <i class="fa-solid fa-image"></i>
+              <span><strong>Pilih background baru</strong></span>
+            </div>
+            <div class="admin-upload-preview" id="siswaBackgroundPreviewWrap" hidden>
+              <img id="siswaBackgroundPreviewImg" alt="Pratinjau background baru">
+              <div class="admin-upload-preview-info">
+                <span class="admin-upload-filename" id="siswaBackgroundFileName"></span>
+                <span class="admin-upload-filesize" id="siswaBackgroundFileSize"></span>
+              </div>
+              <button type="button" class="admin-upload-remove" id="siswaBackgroundRemoveFile" aria-label="Hapus pilihan background">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-modal-actions">
+          <button type="button" class="admin-btn admin-btn-secondary" id="siswaBackgroundResetBtn">Reset ke Default</button>
+          <button type="submit" class="admin-btn admin-btn-primary" id="siswaBackgroundSubmit">
+            <span class="admin-spinner" hidden></span>
+            <span>Simpan Background</span>
+          </button>
+        </div>
+        <div id="siswaBackgroundStatus" class="admin-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+
   <!-- Modal: tambah admin -->
   <div id="createAdminModal" class="admin-modal" aria-hidden="true">
     <div class="admin-modal-backdrop" data-close-modal></div>

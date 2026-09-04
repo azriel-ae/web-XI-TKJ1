@@ -2,7 +2,10 @@
 // API: GET /api/siswa
 // Data siswa bawaan (data/siswa.json) dengan foto & data (nama/NIS/
 // JK/Instagram) yang sudah di-override oleh admin (kalau pernah
-// diganti lewat /admin).
+// diganti lewat /admin), plus "bgDetail" (background khusus halaman
+// Detail Siswa, kalau pernah diset admin — null berarti pakai
+// background default). "bgDetail" HANYA dipakai oleh modal Detail
+// Siswa di frontend, tidak memengaruhi bagian lain dari website.
 // =========================
 
 const baseSiswa = require("../data/siswa.json");
@@ -15,16 +18,19 @@ module.exports = async function handler(req, res) {
 
     const fotoOverrides = await readJson("siswa-foto-overrides.json", {});
     const dataOverrides = await readJson("siswa-data-overrides.json", {});
+    const backgroundOverrides = await readJson("siswa-background-overrides.json", {});
 
     const combined = baseSiswa.map(student => {
         const fotoUrl = fotoOverrides && fotoOverrides[student.absen];
         const dataOverride = dataOverrides && dataOverrides[student.absen];
+        const backgroundOverride = backgroundOverrides && backgroundOverrides[student.absen];
         return {
             ...student,
             ...(dataOverride
                 ? { nama: dataOverride.nama, nis: dataOverride.nis, jk: dataOverride.jk, ig: dataOverride.ig }
                 : {}),
-            ...(fotoUrl ? { foto: fotoUrl } : {})
+            ...(fotoUrl ? { foto: fotoUrl } : {}),
+            bgDetail: backgroundOverride && backgroundOverride.url ? backgroundOverride.url : null
         };
     });
 
