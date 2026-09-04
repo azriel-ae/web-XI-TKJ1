@@ -191,8 +191,6 @@
       const data = await api("/api/admin/session");
       if (data.loggedIn) {
         showDashboard(data.username, data.isOwner, data.role, data.assignedAbsen);
-        const warningEl = document.getElementById("kvWarning");
-        if (warningEl) warningEl.hidden = !data.isOwner || !!data.kvEnabled;
       } else {
         showLogin();
       }
