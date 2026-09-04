@@ -6,11 +6,8 @@ let studentData = [];
 // videoId = ID video YouTube (bagian setelah "v=" di URL youtube.com/watch?v=...
 // atau bagian akhir URL youtu.be/...).
 const SPECIAL_STUDENT_SONGS = {
-  // TODO: ganti "GANTI_DENGAN_VIDEO_ID_YOUTUBE" dengan ID video YouTube yang
-  // benar untuk lagu favorit Azriel (sebelumnya memakai Spotify track
-  // 6PqWdGIYq5xdLaa4zCZfRp — judul lagunya tidak bisa dipastikan lewat cara
-  // yang legal/resmi, jadi silakan isi manual dengan link YouTube yang sesuai).
-  "azriel aurizal ednisia": { videoId: "GANTI_DENGAN_VIDEO_ID_YOUTUBE" },
+  // Jatuh Suka - TULUS (Official Music Video, kanal resmi TULUS).
+  "azriel aurizal ednisia": { videoId: "NRGDT2UUlsk" },
   // Perfect - Ed Sheeran (Official Music Video), diputar mulai menit 02:26
   // (146 detik) khusus untuk Danish.
   "achmad danish zahi baiza": { videoId: "2Vv-BfVoq4g", startAt: 146 }
