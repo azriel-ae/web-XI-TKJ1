@@ -6,8 +6,9 @@ let studentData = [];
 // videoId = ID video YouTube (bagian setelah "v=" di URL youtube.com/watch?v=...
 // atau bagian akhir URL youtu.be/...).
 const SPECIAL_STUDENT_SONGS = {
-  // Jatuh Suka - TULUS (Official Music Video, kanal resmi TULUS).
-  "azriel aurizal ednisia": { videoId: "NRGDT2UUlsk" },
+  // Jatuh Suka - TULUS (Official Music Video, kanal resmi TULUS),
+  // diputar mulai menit 01:38 (98 detik) khusus untuk Azriel.
+  "azriel aurizal ednisia": { videoId: "NRGDT2UUlsk", startAt: 98 },
   // Perfect - Ed Sheeran (Official Music Video), diputar mulai menit 02:26
   // (146 detik) khusus untuk Danish.
   "achmad danish zahi baiza": { videoId: "2Vv-BfVoq4g", startAt: 146 }

@@ -724,6 +724,77 @@
 }
 
 /* =========================================================================
+   8b. SOSMED (foto profil Instagram & TikTok)
+   ========================================================================= */
+.admin-social-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+.admin-social-item {
+  border: 1px solid var(--color-light-gray);
+  border-radius: var(--admin-radius-input);
+  padding: 16px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.admin-social-item-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.admin-social-item-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: inline-grid;
+  place-items: center;
+  background: var(--color-offwhite);
+  color: var(--color-charcoal);
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.admin-social-item-header > div { display: flex; flex-direction: column; min-width: 0; }
+.admin-social-item-title { font-weight: 700; color: var(--color-charcoal); font-size: 0.92rem; }
+.admin-social-item-handle {
+  font-size: 0.76rem;
+  color: var(--color-gray, #8a8a8a);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admin-social-item-preview {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--color-offwhite);
+  border: 1px solid var(--color-light-gray);
+  display: grid;
+  place-items: center;
+  align-self: center;
+}
+.admin-social-item-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.admin-social-item-fallback {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--color-gray, #8a8a8a);
+}
+.admin-social-item-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.admin-social-item-actions .admin-btn { flex: 1; }
+
+/* =========================================================================
    9. TABLES (Siswa / Admin)
    ========================================================================= */
 .admin-table-wrap { overflow-x: auto; }

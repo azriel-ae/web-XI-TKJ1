@@ -147,6 +147,7 @@
   const panelMeta = {
     dashboard: { title: "Dashboard", subtitle: "Kelola konten website XI TKJ 1." },
     galeri: { title: "Galeri", subtitle: "Tambahkan dan kelola foto galeri kelas." },
+    sosmed: { title: "Sosmed", subtitle: "Atur foto profil Instagram & TikTok kelas yang tampil di halaman utama." },
     siswa: { title: "Siswa", subtitle: "Cari dan ubah data atau pasfoto siswa." },
     admin: { title: "Manajemen Admin", subtitle: "Kelola akun yang memiliki akses ke panel admin." },
     log: { title: "Log Aktivitas", subtitle: "Riwayat kegiatan di panel admin (khusus super_admin)." }
@@ -225,6 +226,7 @@
 
     goToPanel("dashboard");
     loadGalleryExtra();
+    loadSocialAdmin();
     loadSiswaAdmin();
 
     const navAdminItem = document.getElementById("navAdminItem");
@@ -416,6 +418,99 @@
       loadGalleryExtra();
     } catch (error) {
       showToast(error.message || "Foto gagal diupload. Coba lagi.", "error");
+    }
+  });
+
+  // ---------- foto profil sosmed (Instagram & TikTok) ----------
+  const SOCIAL_PLATFORMS = ["instagram", "tiktok"];
+
+  function applySocialPreview(platform, avatarUrl) {
+    const img = document.getElementById(`socialImg_${platform}`);
+    const fallback = document.getElementById(`socialFallback_${platform}`);
+    if (!img || !fallback) return;
+    if (avatarUrl) {
+      img.src = avatarUrl;
+      img.hidden = false;
+      fallback.hidden = true;
+    } else {
+      img.removeAttribute("src");
+      img.hidden = true;
+      fallback.hidden = false;
+    }
+  }
+
+  async function loadSocialAdmin() {
+    try {
+      const profiles = await api("/api/social");
+      SOCIAL_PLATFORMS.forEach(platform => {
+        const profile = profiles && profiles[platform];
+        applySocialPreview(platform, profile && profile.avatarUrl);
+      });
+    } catch {
+      // Gagal dimuat -> biarkan tampilan fallback default (inisial),
+      // admin masih tetap bisa upload foto baru.
+      SOCIAL_PLATFORMS.forEach(platform => applySocialPreview(platform, null));
+    }
+  }
+
+  SOCIAL_PLATFORMS.forEach(platform => {
+    const form = document.querySelector(`[data-social-form="${platform}"]`);
+    if (!form) return;
+
+    const fileInput = document.getElementById(`socialFoto_${platform}`);
+    const statusEl = form.querySelector(`[data-social-status="${platform}"]`);
+    const submitBtn = form.querySelector(`[data-social-submit="${platform}"]`);
+    const deleteBtn = form.querySelector(`[data-social-delete="${platform}"]`);
+
+    form.addEventListener("submit", async event => {
+      event.preventDefault();
+      setStatus(statusEl, "", null);
+
+      const file = fileInput.files[0];
+      if (!file) {
+        setStatus(statusEl, "Pilih foto terlebih dahulu.", "error");
+        return;
+      }
+
+      toggleSpinner(submitBtn, true);
+      try {
+        const foto = await fileToPayload(file);
+        const result = await api("/api/admin/gallery?resource=social", {
+          method: "POST",
+          body: JSON.stringify({ platform, foto })
+        });
+        applySocialPreview(platform, result.avatarUrl);
+        form.reset();
+        showToast("Foto profil berhasil disimpan.", "success");
+      } catch (error) {
+        setStatus(statusEl, error.message || "Foto gagal diupload. Coba lagi.", "error");
+        showToast(error.message || "Foto gagal diupload.", "error");
+      } finally {
+        toggleSpinner(submitBtn, false);
+      }
+    });
+
+    if (deleteBtn) {
+      deleteBtn.addEventListener("click", async () => {
+        const confirmed = await askConfirm({
+          title: `Hapus foto profil ${platform === "instagram" ? "Instagram" : "TikTok"}?`,
+          body: "Halaman utama akan menampilkan avatar inisial sebagai gantinya.",
+          okLabel: "Hapus"
+        });
+        if (!confirmed) return;
+
+        try {
+          await api("/api/admin/gallery?resource=social", {
+            method: "DELETE",
+            body: JSON.stringify({ platform })
+          });
+          applySocialPreview(platform, null);
+          form.reset();
+          showToast("Foto profil berhasil dihapus.", "success");
+        } catch (error) {
+          showToast(error.message || "Foto gagal dihapus. Coba lagi.", "error");
+        }
+      });
     }
   });
 
@@ -1064,6 +1159,8 @@
     logout: "Logout",
     gallery_upload: "Upload foto galeri",
     gallery_delete: "Hapus foto galeri",
+    social_avatar_update: "Ubah foto profil sosmed",
+    social_avatar_delete: "Hapus foto profil sosmed",
     siswa_edit: "Ubah data siswa",
     siswa_foto_edit: "Ubah foto siswa",
     admin_create: "Buat akun admin",
