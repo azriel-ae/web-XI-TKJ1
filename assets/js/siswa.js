@@ -11,7 +11,10 @@ const SPECIAL_STUDENT_SONGS = {
   "azriel aurizal ednisia": { videoId: "NRGDT2UUlsk", startAt: 98 },
   // Perfect - Ed Sheeran (Official Music Video), diputar mulai menit 02:26
   // (146 detik) khusus untuk Danish.
-  "achmad danish zahi baiza": { videoId: "2Vv-BfVoq4g", startAt: 146 }
+  "achmad danish zahi baiza": { videoId: "2Vv-BfVoq4g", startAt: 146 },
+  // Human Nature - Michael Jackson (Official Music Video, kanal resmi Michael Jackson),
+  // diputar mulai menit 01:32 (92 detik) khusus untuk David.
+  "david abdie saputra": { videoId: "_E0tcilfKZQ", startAt: 92 }
 };
 
 // --- YouTube IFrame Player API resmi: siap dipakai begitu skrip di index.html
