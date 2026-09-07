@@ -47,10 +47,6 @@ Tanpa langkah ini, panel admin tetap bisa login, tapi semua perubahan (akun baru
 
 Untuk keamanan, disarankan juga mengisi `SESSION_SECRET` (string acak bebas) di Environment Variables Vercel — lihat `.env.example` untuk detail & cara mengganti password akun admin tanpa mengubah kode.
 
-## Avatar Instagram & TikTok (Kontak Kelas)
-
-Section **Kontak Kelas** menampilkan foto profil Instagram (`@tkj.1networks_`) dan TikTok (`@xitkj1smk1npol`) secara dinamis lewat `/api/social`, yang mengambil data hanya lewat **API resmi** masing-masing platform (Meta Graph API & TikTok Display API) — tidak ada scraping maupun endpoint tidak resmi.
-
 - Kalau environment variable terkait (lihat `.env.example`) belum diisi, avatar otomatis memakai **fallback** berupa inisial `IG`/`TT` sesuai design system. Username dan link tetap tampil normal.
 - Hasil dari API resmi disimpan sementara di cache server (lewat mekanisme yang sama dengan `lib/kvStore.js`) selama beberapa jam, supaya halaman tidak memicu request baru setiap kali dibuka.
 - Kegagalan API (token kedaluwarsa, rate limit, dll.) tidak pernah membuat halaman rusak — otomatis jatuh ke cache terakhir yang masih berlaku, atau ke fallback.
