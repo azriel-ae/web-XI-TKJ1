@@ -14,7 +14,13 @@ const SPECIAL_STUDENT_SONGS = {
   "achmad danish zahi baiza": { videoId: "2Vv-BfVoq4g", startAt: 146 },
   // Human Nature - Michael Jackson (Official Music Video, kanal resmi Michael Jackson),
   // diputar mulai menit 01:32 (92 detik) khusus untuk David.
-  "david abdie saputra": { videoId: "_E0tcilfKZQ", startAt: 92 }
+  "david abdie saputra": { videoId: "_E0tcilfKZQ", startAt: 92 },
+  // Teh Hijau - TULUS (Official Music Video, kanal resmi TULUS),
+  // diputar mulai menit 00:40 (40 detik) khusus untuk Diko.
+  "diko pradista": { videoId: "zyLmavBAY7k", startAt: 40 },
+  // Best Friend - Rex Orange County (Official Audio, kanal resmi Rex Orange
+  // County), diputar dari awal khusus untuk Akhmad Syaifudin Zuhri.
+  "akhmad syaifudin zuhri": { videoId: "OqBuXQLR4Y8" }
 };
 
 // --- YouTube IFrame Player API resmi: siap dipakai begitu skrip di index.html
